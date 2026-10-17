@@ -186,7 +186,9 @@ a.btn { display: inline-flex; align-items: center; color: var(--text); text-deco
 .a-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
 .a-title h1 { font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -.02em; }
 .inv-chip { font-family: var(--mono); font-size: 13px; color: var(--accent); background: color-mix(in oklab, var(--accent) 12%, transparent); padding: 3px 9px; border-radius: 6px; overflow-wrap: anywhere; }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; margin-top: 18px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; margin: 18px 0 0; padding: 0; list-style: none; }
+.sec.doc { margin-top: 28px; }
+.sec.doc .sec-head a { font-family: var(--mono); overflow-wrap: anywhere; }
 .facts .cap { font-size: 11px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 .pill { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border-radius: 7px; background: var(--bg-elev); border: 1px solid var(--border); color: var(--text-dim); }

@@ -1,6 +1,7 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Header } from './components/Header';
 import { useCatalog } from './data/useCatalog';
+import { ComponentPage } from './screens/ComponentPage';
 import { Home } from './screens/Home';
 import { PluginPage } from './screens/PluginPage';
 import { Search } from './screens/Search';
@@ -23,7 +24,7 @@ export function CatalogApp({ catalog }: { catalog: Catalog }) {
         <Route path="/" element={<Home catalog={catalog} />} />
         <Route path="/search" element={<Search catalog={catalog} />} />
         <Route path="/plugin/:name" element={<PluginPage catalog={catalog} notFound={<Placeholder title="Not found" />} />} />
-        <Route path="/plugin/:name/:kind/:item" element={<Placeholder title="Component" />} />
+        <Route path="/plugin/:name/:kind/:item" element={<ComponentPage catalog={catalog} notFound={<Placeholder title="Not found" />} />} />
         <Route path="/start" element={<Placeholder title="Connect the marketplace" />} />
         <Route path="/news" element={<Placeholder title="What's new" />} />
         <Route path="*" element={<Placeholder title="Not found" />} />
