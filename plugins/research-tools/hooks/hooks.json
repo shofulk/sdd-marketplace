@@ -1,0 +1,12 @@
+{
+  "description": "Appends this plugin's loaded version to .sdd/trace.jsonl at session start.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/trace.mjs\"", "timeout": 15 }
+        ]
+      }
+    ]
+  }
+}
