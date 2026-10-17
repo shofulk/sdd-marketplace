@@ -1,17 +1,27 @@
 {
   "name": "sdd",
   "owner": { "name": "shofulk" },
-  "description": "Spec-driven engineering plugins for Claude Code: a PR gate and the self-review workflow that feeds it.",
+  "description": "Spec-driven development for Claude Code: spec, plan, run and retro agents and skills, with the paved-path stack skills, a researcher and an architecture reviewer they build on.",
   "plugins": [
     {
-      "name": "sdd-gate",
-      "source": "./plugins/sdd-gate",
-      "description": "Blocks gh pr create, merge and ready until a passing self-review verdict covers the exact tree being shipped."
+      "name": "engineering-paved-path",
+      "source": "./plugins/engineering-paved-path",
+      "description": "Supplies the React, Next.js, Fastify, architecture, testing and security skills."
+    },
+    {
+      "name": "research-tools",
+      "source": "./plugins/research-tools",
+      "description": "Supplies the read-only researcher agent."
+    },
+    {
+      "name": "architecture-review",
+      "source": "./plugins/architecture-review",
+      "description": "Supplies the generalized architecture-reviewer agent."
     },
     {
       "name": "sdd-engineering",
       "source": "./plugins/sdd-engineering",
-      "description": "The pr-self-review workflow: reviews the branch, verifies its findings and writes the verdict sdd-gate checks."
+      "description": "Spec-driven engineering: spec-creator, implementation-planner, implementer and plan-verifier agents, run-plan to execute an approved plan, workflow-retro to analyze a finished run."
     }
   ]
 }

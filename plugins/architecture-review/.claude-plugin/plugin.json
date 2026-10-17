@@ -1,0 +1,12 @@
+{
+  "name": "architecture-review",
+  "displayName": "Architecture Review",
+  "version": "0.1.0",
+  "description": "Supplies the generalized architecture-reviewer agent.",
+  "author": { "name": "shofulk" },
+  "repository": "https://github.com/shofulk/sdd-marketplace",
+  "keywords": ["architecture", "review", "agent", "onion-architecture"],
+  "dependencies": [
+    { "name": "engineering-paved-path", "version": "~0.1.0" }
+  ]
+}

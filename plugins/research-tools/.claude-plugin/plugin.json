@@ -1,0 +1,10 @@
+{
+  "name": "research-tools",
+  "displayName": "Research Tools",
+  "version": "0.1.0",
+  "description": "Supplies the read-only researcher agent.",
+  "author": { "name": "shofulk" },
+  "repository": "https://github.com/shofulk/sdd-marketplace",
+  "keywords": ["research", "agent", "read-only", "documentation"],
+  "dependencies": []
+}

@@ -1,8 +1,3 @@
 # sdd-engineering
 
-The `pr-self-review` workflow: reviews the branch against the project's routing and severity rules,
-verifies every critical finding, and writes the verdict that `sdd-gate` checks before a PR is opened.
-
-Depends on `sdd-gate`.
-
-Status: skeleton — no skill yet.
+Spec-driven engineering for Claude Code: the spec, plan, implementation and verification agents, plus `run-plan` and `workflow-retro`.

@@ -1,8 +1,0 @@
-{
-  "name": "sdd-gate",
-  "version": "0.1.0",
-  "description": "Blocks gh pr create, merge and ready until a passing self-review verdict covers the exact tree being shipped.",
-  "author": { "name": "shofulk" },
-  "repository": "https://github.com/shofulk/sdd-marketplace",
-  "keywords": ["pull-request", "gate", "self-review", "hooks"]
-}

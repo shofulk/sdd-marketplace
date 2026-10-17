@@ -1,0 +1,12 @@
+{
+  "name": "sdd-marketplace",
+  "private": true,
+  "type": "module",
+  "description": "Repository tooling for the sdd Claude Code plugin marketplace: tests, validation, hook-library sync.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test $(ls tests/*.test.mjs plugins/*/tests/*.test.mjs 2>/dev/null)",
+    "validate": "claude plugin validate --strict . && for d in plugins/*/; do claude plugin validate --strict \"$d\" || exit 1; done",
+    "sync-hooklib": "node tools/sync-hooklib.mjs"
+  }
+}

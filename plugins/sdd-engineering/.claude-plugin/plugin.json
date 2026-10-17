@@ -1,9 +1,14 @@
 {
   "name": "sdd-engineering",
+  "displayName": "SDD Engineering",
   "version": "0.1.0",
-  "description": "The pr-self-review workflow: reviews the branch, verifies its findings and writes the verdict sdd-gate checks.",
+  "description": "Spec-driven engineering: spec-creator, implementation-planner, implementer and plan-verifier agents, run-plan to execute an approved plan, workflow-retro to analyze a finished run.",
   "author": { "name": "shofulk" },
   "repository": "https://github.com/shofulk/sdd-marketplace",
-  "keywords": ["self-review", "pull-request", "workflow", "spec-driven"],
-  "dependencies": [ { "name": "sdd-gate", "version": "~0.1.0" } ]
+  "keywords": ["spec-driven", "workflow", "agents", "planning", "verification", "retro"],
+  "dependencies": [
+    { "name": "engineering-paved-path", "version": "~0.1.0" },
+    { "name": "research-tools", "version": "~0.1.0" },
+    { "name": "architecture-review", "version": "~0.1.0" }
+  ]
 }
