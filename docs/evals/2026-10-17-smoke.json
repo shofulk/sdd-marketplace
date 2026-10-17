@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.293",
+  "startedAt": "2026-10-17T18:07:10.605Z",
+  "durationSeconds": 5,
+  "costUsd": 0.1237338,
+  "partial": false,
+  "suite": {
+    "root": "~/Documents/Projects/AI_Engineering/sdd-marketplace/.claude/worktrees/agent-a7f957e58b169e8f4/plugins",
+    "ablation": "none",
+    "caseFilter": "smoke",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "engineering-paved-path",
+        "version": "1.0.0",
+        "path": "~/Documents/Projects/AI_Engineering/sdd-marketplace/.claude/worktrees/agent-a7f957e58b169e8f4/plugins/engineering-paved-path"
+      },
+      {
+        "name": "research-tools",
+        "version": "1.0.0",
+        "path": "~/Documents/Projects/AI_Engineering/sdd-marketplace/.claude/worktrees/agent-a7f957e58b169e8f4/plugins/research-tools"
+      },
+      {
+        "name": "architecture-review",
+        "version": "1.0.0",
+        "path": "~/Documents/Projects/AI_Engineering/sdd-marketplace/.claude/worktrees/agent-a7f957e58b169e8f4/plugins/architecture-review"
+      },
+      {
+        "name": "sdd-engineering",
+        "version": "1.0.0",
+        "path": "~/Documents/Projects/AI_Engineering/sdd-marketplace/.claude/worktrees/agent-a7f957e58b169e8f4/plugins/sdd-engineering"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "smoke",
+      "dir": "sdd-engineering/evals/smoke",
+      "source": "mixed",
+      "promptMarkdown": "/sdd-engineering:run-plan",
+      "runsPerCase": 1,
+      "timeoutSeconds": 300,
+      "maxTurns": 6,
+      "graders": [
+        {
+          "name": "loads-architecture-review",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": "trace",
+            "pattern": "\"source\":\"architecture-review@inline\",\"version\":\"1\\.0\\.0\"",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "loads-engineering-paved-path",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": "trace",
+            "pattern": "\"source\":\"engineering-paved-path@inline\",\"version\":\"1\\.0\\.0\"",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "loads-research-tools",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": "trace",
+            "pattern": "\"source\":\"research-tools@inline\",\"version\":\"1\\.0\\.0\"",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "loads-sdd-engineering",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": "trace",
+            "pattern": "\"source\":\"sdd-engineering@inline\",\"version\":\"1\\.0\\.0\"",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "run-plan-registered",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": "trace",
+            "pattern": "\"sdd-engineering:run-plan\"",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "run-plan-usage",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": "last_message",
+            "pattern": "run-plan: usage: /sdd-engineering:run-plan",
+            "flags": "",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "trace-written",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": ".sdd/trace.jsonl"
+            },
+            "pattern": "\"plugin\":\"sdd-engineering\",\"version\":\"1\\.0\\.0\"",
+            "flags": "",
+            "match": "contains"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.1237338,
+            "judgeCostUsd": 0,
+            "durationSeconds": 5,
+            "startedAt": "2026-10-17T18:07:10.638Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-MOUu11/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "loads-architecture-review",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \"source\":\"architecture-review@inline\",\"version\":\"1\\.0\\.0\"",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "loads-engineering-paved-path",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \"source\":\"engineering-paved-path@inline\",\"version\":\"1\\.0\\.0\"",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "loads-research-tools",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \"source\":\"research-tools@inline\",\"version\":\"1\\.0\\.0\"",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "loads-sdd-engineering",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \"source\":\"sdd-engineering@inline\",\"version\":\"1\\.0\\.0\"",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "run-plan-registered",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \"sdd-engineering:run-plan\"",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "run-plan-usage",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched run-plan: usage: /sdd-engineering:run-plan",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "trace-written",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched \"plugin\":\"sdd-engineering\",\"version\":\"1\\.0\\.0\"",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "advisories": [
+        "grader \"trace-written\" cannot pass with the granted tools: it checks a file the run creates, but no tool the run may use can create one (a plugin hook still could; a skill's own allowed-tools does not count inside a run) — add Write (or Edit / Bash) to the case's allowed_tools and grant it with --allow-tools"
+      ],
+      "aggregates": {
+        "score": 1,
+        "passRate": 1
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 1,
+    "overallScore": 1,
+    "overallPassRate": 1
+  }
+}

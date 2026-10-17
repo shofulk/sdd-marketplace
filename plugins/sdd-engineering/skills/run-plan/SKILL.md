@@ -63,6 +63,11 @@ reports passed back as `Research:`.
 | `--resume` | Continue from `<runs>/<feature>/state.md`. |
 | `--from <phase>` | Start at a phase; earlier phases must be done in the state file. |
 
+**No `<path>`:** reply with the line
+`run-plan: usage: /sdd-engineering:run-plan <spec-or-plan path> [notes: "…"] [design: …] [--rounds N] [--resume] [--from <phase>]`,
+then the plans found under `<plans>` (or `no plans found under <plans>`), and stop — no run
+files are written.
+
 **Notes** are classified before anything runs. Guidance that leaves every `AC*` and the scope
 unchanged ("reuse the existing hook", "keep the old endpoint alive") goes to every lane as
 `Run notes:`. Anything that adds, removes or changes behaviour is a plan change: stop and tell

@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: run-plan
+description: /sdd-engineering:run-plan takes an approved two-AC plan to a verified, reviewed change set and records the run state.
+tags: [run-plan]
+plugins:
+  - ../../../engineering-paved-path
+  - ../../../research-tools
+  - ../../../architecture-review
+  - ../..
+runs: 1
+context:
+  scaffold_script: fixture.sh
+execution:
+  max_turns: 120
+  timeout_seconds: 3000
+  allowed_tools: [Read, Glob, Grep, Write, Edit, Bash, Agent, Skill, TodoWrite]

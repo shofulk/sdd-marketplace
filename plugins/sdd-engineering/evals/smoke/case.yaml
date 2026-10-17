@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: smoke
+description: The four sdd plugins load at their versions, their SessionStart traces run, and /sdd-engineering:run-plan is reachable.
+tags: [smoke]
+plugins:
+  - ../../../engineering-paved-path
+  - ../../../research-tools
+  - ../../../architecture-review
+  - ../..
+runs: 1
+execution:
+  max_turns: 6
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep]
