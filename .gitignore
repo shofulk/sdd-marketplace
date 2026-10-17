@@ -1,0 +1,5 @@
+.DS_Store
+.claude/*.local.md
+node_modules/
+evals/results/
+plugins/*/evals/results/

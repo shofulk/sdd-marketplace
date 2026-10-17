@@ -1,0 +1,17 @@
+{
+  "name": "sdd",
+  "owner": { "name": "shofulk" },
+  "description": "Spec-driven engineering plugins for Claude Code: a PR gate and the self-review workflow that feeds it.",
+  "plugins": [
+    {
+      "name": "sdd-gate",
+      "source": "./plugins/sdd-gate",
+      "description": "Blocks gh pr create, merge and ready until a passing self-review verdict covers the exact tree being shipped."
+    },
+    {
+      "name": "sdd-engineering",
+      "source": "./plugins/sdd-engineering",
+      "description": "The pr-self-review workflow: reviews the branch, verifies its findings and writes the verdict sdd-gate checks."
+    }
+  ]
+}

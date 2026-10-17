@@ -1,0 +1,9 @@
+{
+  "name": "sdd-engineering",
+  "version": "0.1.0",
+  "description": "The pr-self-review workflow: reviews the branch, verifies its findings and writes the verdict sdd-gate checks.",
+  "author": { "name": "shofulk" },
+  "repository": "https://github.com/shofulk/sdd-marketplace",
+  "keywords": ["self-review", "pull-request", "workflow", "spec-driven"],
+  "dependencies": [ { "name": "sdd-gate", "version": "~0.1.0" } ]
+}
