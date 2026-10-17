@@ -112,6 +112,25 @@ test('every plugin has README.md, CHANGELOG.md and NOTICE', () => {
   }
 });
 
+test('hooks/lib copies match tools/hooklib', () => {
+  const canonical = join(ROOT, 'tools', 'hooklib');
+  const names = readdirSync(canonical).filter((n) => n.endsWith('.mjs')).sort();
+  for (const plugin of pluginDirs()) {
+    const lib = join(PLUGINS_DIR, plugin, 'hooks', 'lib');
+    const hooksJson = join(PLUGINS_DIR, plugin, 'hooks', 'hooks.json');
+    const wired = existsSync(hooksJson) && readFileSync(hooksJson, 'utf8').includes('/hooks/lib/');
+    if (!existsSync(lib)) {
+      assert.ok(!wired, `${plugin}: hooks.json uses hooks/lib/ but the copy is missing — run npm run sync-hooklib`);
+      continue;
+    }
+    assert.deepEqual(readdirSync(lib).sort(), names, `${plugin}/hooks/lib: file set differs — run npm run sync-hooklib`);
+    for (const n of names) {
+      assert.equal(readFileSync(join(lib, n), 'utf8'), readFileSync(join(canonical, n), 'utf8'),
+        `${plugin}/hooks/lib/${n} differs from tools/hooklib — run npm run sync-hooklib`);
+    }
+  }
+});
+
 test('CHANGELOG newest version equals plugin.json version', (t) => {
   let checked = 0;
   for (const plugin of pluginDirs()) {
