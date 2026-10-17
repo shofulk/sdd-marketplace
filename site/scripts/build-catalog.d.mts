@@ -1,12 +1,11 @@
 import type { Catalog, Plugin } from '../src/types';
 
-export const DEFAULT_STABLE_PATH: string;
+/** The branch that is the stable channel (findings SDD-001). */
+export const STABLE_BRANCH: string;
 
 export interface BuildOptions {
-  /** The repository root that holds .claude-plugin/marketplace.json. */
+  /** The repository root that holds .claude-plugin/marketplace.json; the stable branch is read only when it is the git root. */
   root: string;
-  /** The stable marketplace file, relative to root. */
-  stablePath?: string;
   /** Defaults to GITHUB_SHA, then `git rev-parse HEAD`, then "local". */
   sha?: string;
   now?: Date;

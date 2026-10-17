@@ -3,13 +3,13 @@ import { CopyButton } from '../components/CopyButton';
 import { cap, entryPlugin, numberWord, transitiveDependencies } from '../lib/catalog';
 import type { Catalog } from '../types';
 
-function stableSnippet(name: string, repo: string, path: string): string {
+// The stable channel is a branch with its own marketplace name (findings SDD-001).
+function stableSnippet(name: string, repo: string, branch: string): string {
   return [
     '{',
     '  "extraKnownMarketplaces": {',
     `    "${name}": {`,
-    `      "source": { "source": "github", "repo": "${repo}",`,
-    `                  "path": "${path}" }`,
+    `      "source": { "source": "github", "repo": "${repo}", "ref": "${branch}" }`,
     '    }',
     '  }',
     '}',
@@ -43,8 +43,12 @@ export function Start({ catalog }: { catalog: Catalog }) {
     stable
       ? {
         title: 'Or pin stable',
-        text: `A second marketplace file pins the release tags. Add it to the project's .claude/settings.json, then install from ${stable.name}.`,
-        code: [stableSnippet(stable.name, repo, stable.path), `/plugin install ${entryName}@${stable.name}`],
+        text: `The ${stable.branch} branch holds the released versions as the marketplace ${stable.name}. Add it and install from it, or declare it in the project's .claude/settings.json.`,
+        code: [
+          `claude plugin marketplace add ${repo}#${stable.branch}`,
+          `/plugin install ${entryName}@${stable.name}`,
+          stableSnippet(stable.name, repo, stable.branch),
+        ],
       }
       : { title: 'Or pin stable', text: 'No stable release yet: every plugin is on the latest channel.', code: [] },
     {

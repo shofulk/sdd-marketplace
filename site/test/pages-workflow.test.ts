@@ -42,6 +42,13 @@ describe('pages workflow', () => {
     expect(buildJob.steps.indexOf(runStep(buildJob, 'npm ci')!)).toBeLessThan(buildJob.steps.indexOf(runStep(buildJob, 'npm run build')!));
   });
 
+  it('makes the stable branch available to build-catalog before the build (SDD-001)', () => {
+    const fetch = buildJob.steps.find((s) => /git fetch\b.*refs\/heads\/stable:refs\/remotes\/origin\/stable/.test(s.run ?? ''));
+    expect(fetch).toBeDefined();
+    expect(fetch!.run).toMatch(/\|\|/); // a repository without a stable branch still builds
+    expect(buildJob.steps.indexOf(fetch!)).toBeLessThan(buildJob.steps.indexOf(runStep(buildJob, 'npm run build')!));
+  });
+
   it('uploads site/dist as the Pages artifact', () => {
     expect(usesStep(buildJob, 'actions/upload-pages-artifact')?.with?.path).toBe('site/dist');
   });

@@ -7,7 +7,7 @@ export interface Catalog {
   marketplace: {
     name: string; owner: string; description: string;
     repo: string | null; // "owner/name"
-    stable: { name: string; path: string } | null; // the stable marketplace file's own name and its repo path; null = none
+    stable: { branch: string; name: string } | null; // the stable branch and its marketplace name (SDD-001); null = no stable branch
   };
   build: { sha: string; builtAt: string }; // ISO time
   plugins: Plugin[];
@@ -21,7 +21,7 @@ export interface Plugin {
   author: string;
   keywords: string[];
   version: string; // plugin.json version = latest
-  stableVersion: string | null; // from the stable file's ref; null = not released
+  stableVersion: string | null; // plugin.json version on the stable branch; null = not released
   dependencies: { name: string; range: string | null }[];
   readme: string | null; // Markdown
   changelog: { version: string; date: string | null; summary: string }[]; // newest first, no Unreleased

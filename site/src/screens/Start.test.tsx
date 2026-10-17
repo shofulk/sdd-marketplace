@@ -16,27 +16,30 @@ describe('Start (getting started)', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Connect the marketplace' })).toBeInTheDocument();
     const steps = within(screen.getByRole('list', { name: 'Steps' })).getAllByRole('listitem');
     expect(steps).toHaveLength(4);
-    const code = steps.map((s) => s.querySelector('pre')!.textContent);
-    expect(code[0]).toBe('/plugin marketplace add shofulk/sdd-marketplace');
-    expect(code[1]).toBe('/plugin install sdd-engineering@sdd');
-    expect(JSON.parse(code[2]!)).toEqual({
+    const code = steps.map((s) => [...s.querySelectorAll('pre')].map((p) => p.textContent!));
+    expect(code[0]).toEqual(['/plugin marketplace add shofulk/sdd-marketplace']);
+    expect(code[1]).toEqual(['/plugin install sdd-engineering@sdd']);
+    // SDD-001: the stable channel is the `stable` branch under its own marketplace name
+    expect(code[2][0]).toBe('claude plugin marketplace add shofulk/sdd-marketplace#stable');
+    expect(code[2][1]).toBe('/plugin install sdd-engineering@sdd-stable');
+    expect(JSON.parse(code[2][2])).toEqual({
       extraKnownMarketplaces: {
-        'sdd-stable': {
-          source: { source: 'github', repo: 'shofulk/sdd-marketplace', path: '.claude-plugin/stable/marketplace.json' },
-        },
+        'sdd-stable': { source: { source: 'github', repo: 'shofulk/sdd-marketplace', ref: 'stable' } },
       },
     });
-    expect(code[3]).toBe('claude plugin list --json');
+    expect(code[2].join('\n')).not.toContain('"path"');
+    expect(code[3]).toEqual(['claude plugin list --json']);
     for (const s of steps) expect(within(s).getAllByRole('button', { name: 'Copy' }).length).toBeGreaterThan(0);
   });
 
-  it('takes the stable channel from the catalog and says how to install from it', () => {
-    renderAt('#/start', { ...catalogFixture, marketplace: { ...catalogFixture.marketplace, stable: { name: 'sdd-pinned', path: 'channels/stable.json' } } });
+  it('takes the stable branch and its marketplace name from the catalog', () => {
+    renderAt('#/start', { ...catalogFixture, marketplace: { ...catalogFixture.marketplace, stable: { branch: 'pinned', name: 'sdd-pinned' } } });
     const step = within(screen.getByRole('list', { name: 'Steps' })).getAllByRole('listitem')[2];
-    const [snippet, install] = [...step.querySelectorAll('pre')].map((p) => p.textContent!);
-    expect(JSON.parse(snippet).extraKnownMarketplaces['sdd-pinned'].source.path).toBe('channels/stable.json');
+    const [add, install, settings] = [...step.querySelectorAll('pre')].map((p) => p.textContent!);
+    expect(add).toBe('claude plugin marketplace add shofulk/sdd-marketplace#pinned');
     expect(install).toBe('/plugin install sdd-engineering@sdd-pinned');
-    expect(within(step).getAllByRole('button', { name: 'Copy' })).toHaveLength(2);
+    expect(JSON.parse(settings).extraKnownMarketplaces['sdd-pinned'].source.ref).toBe('pinned');
+    expect(within(step).getAllByRole('button', { name: 'Copy' })).toHaveLength(3);
   });
 
   it('says there is no stable release yet when the catalog has no stable channel', () => {

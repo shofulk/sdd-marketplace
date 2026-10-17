@@ -13,8 +13,8 @@ shape of `src/types.ts`:
 | Source | What it gives |
 |---|---|
 | `.claude-plugin/marketplace.json` | the marketplace name, owner, description and its plugins (relative `source` paths) |
-| `.claude-plugin/stable/marketplace.json` | the stable channel's name and path (Getting started), and each plugin's stable version from the entry's `source.ref` = `<plugin>--v<version>`; no file means "stable: not released" |
 | `plugins/<p>/.claude-plugin/plugin.json` | name, displayName, version (= latest), description, author, keywords, dependencies, repository |
+| the `stable` branch (`stable`, else `origin/stable`) | the stable channel: its marketplace name from `.claude-plugin/marketplace.json` on the branch (Getting started), and each plugin's stable version from its `plugin.json` on the branch; no branch, or no `plugin.json` there, means "stable: not released" |
 | `plugins/<p>/agents/*.md` | agents: frontmatter `name`, `description`, `tools`, `model`, `skills`; the first two paragraphs of the body |
 | `plugins/<p>/skills/<s>/SKILL.md` | skills: frontmatter `name`, `description`, `user-invocable`; the first two paragraphs |
 | `plugins/<p>/hooks/hooks.json` | hooks: one per script the commands run, with its events |
@@ -22,11 +22,11 @@ shape of `src/types.ts`:
 
 The build stops with an error when a marketplace entry has no `plugin.json`, when its `plugin.json` names
 another plugin, or when a CHANGELOG's newest version differs from `plugin.json`. Missing READMEs,
-CHANGELOGs, display names, components or the stable file are warnings, and so is frontmatter that is
+CHANGELOGs, display names, components or the stable branch are warnings, and so is frontmatter that is
 not valid YAML (most often an unquoted `: ` in a description), which is then read with its plain values
-quoted, or line by line. The commit SHA comes from
-`GITHUB_SHA`, else `git rev-parse HEAD`; the GitHub repository from `GITHUB_REPOSITORY`, else the first
-plugin's `repository` URL.
+quoted, or line by line. The stable branch is read only when `--root` is the root of a git repository.
+The commit SHA comes from `GITHUB_SHA`, else `git rev-parse HEAD`; the GitHub repository from
+`GITHUB_REPOSITORY`, else the first plugin's `repository` URL.
 
 ## Run it locally
 
@@ -42,14 +42,11 @@ npm run preview   # serve dist/ at /sdd-marketplace/
 npm run catalog   # only write public/catalog.json
 ```
 
-`node scripts/build-catalog.mjs --root .. --out public/catalog.json --stable <path>` takes another stable
-file, relative to the root.
-
 ## Deploy
 
-`.github/workflows/pages.yml` runs on every push to `main` and every tag push: `npm ci`, `npm run build`
-(which runs build-catalog first), `npm test`, then uploads `site/dist` and deploys it with the Pages
-action. The site lives at `https://<owner>.github.io/sdd-marketplace/`: Vite's `base` is
+`.github/workflows/pages.yml` runs on every push to `main` and every tag push: a full checkout plus the
+`stable` branch, `npm ci`, `npm run build` (which runs build-catalog first), `npm test`, then uploads
+`site/dist` and deploys it with the Pages action. The site lives at `https://<owner>.github.io/sdd-marketplace/`: Vite's `base` is
 `/sdd-marketplace/`, and routing uses a hash router because Pages has no single-page fallback.
 
 Turning Pages on is a repository setting (Settings → Pages → Source: GitHub Actions). For tag pushes to

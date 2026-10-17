@@ -27,6 +27,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      # build-catalog reads stable versions from the stable branch (findings SDD-001)
+      - name: Fetch the stable branch
+        run: git fetch --no-tags origin '+refs/heads/stable:refs/remotes/origin/stable' || echo "No stable branch yet; every plugin shows stable as not released"
       - uses: actions/setup-node@v7
         with:
           node-version-file: site/.nvmrc

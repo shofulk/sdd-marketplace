@@ -29,6 +29,37 @@ function build(root = fixture, extra: object = {}) {
   vi.stubEnv('GITHUB_SHA', '');
   return buildCatalog({ root, sha: 'abc1234', now, ...extra });
 }
+function git(cwd: string, ...args: string[]): string {
+  const config = ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null'];
+  return execFileSync('git', [...config, ...args], { cwd, encoding: 'utf8', stdio: 'pipe' }).trim();
+}
+/**
+ * The fixture as its own git repository with a `stable` branch (SDD-001): on stable the marketplace
+ * is named sdd-stable, sdd-engineering is 1.0.0 and research-tools is absent; main is the fixture.
+ * remoteOnly leaves stable only as refs/remotes/origin/stable, as actions/checkout does.
+ */
+function stableRepo({ remoteOnly = false, withStable = true } = {}): string {
+  const root = copyFixture();
+  const manifest = join(root, 'plugins/sdd-engineering/.claude-plugin/plugin.json');
+  const market = join(root, '.claude-plugin/marketplace.json');
+  git(root, 'init', '-q', '-b', 'main');
+  if (withStable) {
+    editJson(manifest, (p) => { p.version = '1.0.0'; });
+    editJson(market, (m) => { m.name = 'sdd-stable'; m.plugins = m.plugins.filter((p: { name: string }) => p.name === 'sdd-engineering'); });
+    git(root, 'add', '.claude-plugin', 'plugins/sdd-engineering');
+    git(root, 'commit', '-q', '-m', 'stable');
+    git(root, 'branch', 'stable');
+    cpSync(join(fixture, 'plugins/sdd-engineering/.claude-plugin/plugin.json'), manifest);
+    cpSync(join(fixture, '.claude-plugin/marketplace.json'), market);
+  }
+  git(root, 'add', '.claude-plugin', 'plugins');
+  git(root, 'commit', '-q', '-m', 'main');
+  if (remoteOnly) {
+    git(root, 'update-ref', 'refs/remotes/origin/stable', git(root, 'rev-parse', 'stable'));
+    git(root, 'branch', '-q', '-D', 'stable');
+  }
+  return root;
+}
 const plugin = (c: ReturnType<typeof build>, name: string) => c.plugins.find((p) => p.name === name)!;
 const comp = (c: ReturnType<typeof build>, p: string, name: string) => plugin(c, p).components.find((x) => x.name === name)!;
 
@@ -41,7 +72,7 @@ describe('buildCatalog on the fixture repository', () => {
     const c = build();
     expect(c.marketplace).toEqual({
       name: 'sdd', owner: 'acme', description: 'Fixture marketplace for the catalog build tests.', repo: 'acme/sdd-marketplace',
-      stable: { name: 'sdd-stable', path: '.claude-plugin/stable/marketplace.json' },
+      stable: null, // the committed fixture is not a git repository root, so it has no stable branch
     });
     expect(c.build).toEqual({ sha: 'abc1234', builtAt: '2026-10-17T18:30:00.000Z' });
   });
@@ -68,10 +99,32 @@ describe('buildCatalog on the fixture repository', () => {
     });
   });
 
-  it('takes stableVersion from the stable file ref, null when not pinned', () => {
-    const c = build();
+  it('takes stableVersion from plugin.json on the stable branch, null when the plugin is not there', () => {
+    const c = build(stableRepo());
     expect(plugin(c, 'sdd-engineering').stableVersion).toBe('1.0.0');
+    expect(plugin(c, 'sdd-engineering').version).toBe('1.1.0');
     expect(plugin(c, 'research-tools').stableVersion).toBeNull();
+    expect(c.marketplace.stable).toEqual({ branch: 'stable', name: 'sdd-stable' });
+    expect(c.warnings.some((w) => w.includes('stable'))).toBe(false);
+  });
+
+  it('reads the stable branch when only origin/stable exists, as in a CI checkout', () => {
+    const c = build(stableRepo({ remoteOnly: true }));
+    expect(plugin(c, 'sdd-engineering').stableVersion).toBe('1.0.0');
+    expect(c.marketplace.stable).toEqual({ branch: 'stable', name: 'sdd-stable' });
+  });
+
+  it('marks every plugin not released when the repository has no stable branch', () => {
+    const c = build(stableRepo({ withStable: false }));
+    expect(c.plugins.map((p) => p.stableVersion)).toEqual([null, null]);
+    expect(c.marketplace.stable).toBeNull();
+    expect(c.warnings.some((w) => w.includes('no stable branch'))).toBe(true);
+  });
+
+  it('does not read a stable branch of an enclosing repository', () => {
+    const c = build(); // the committed fixture lives inside this repository, which may have a stable branch
+    expect(c.plugins.map((p) => p.stableVersion)).toEqual([null, null]);
+    expect(c.marketplace.stable).toBeNull();
   });
 
   it('normalizes tools from a YAML list and from an inline array', () => {
@@ -121,7 +174,7 @@ describe('buildCatalog on the fixture repository', () => {
   });
 
   it('gives a plugin with no README and no CHANGELOG null, [] and one warning', () => {
-    const c = build();
+    const c = build(stableRepo());
     const rt = plugin(c, 'research-tools');
     expect(rt.readme).toBeNull();
     expect(rt.changelog).toEqual([]);
@@ -135,14 +188,6 @@ describe('buildCatalog on the fixture repository', () => {
     expect(plugin(build(root), 'research-tools').components).toEqual([]);
   });
 
-  it('marks every plugin not released when there is no stable file', () => {
-    const root = copyFixture();
-    rmSync(join(root, '.claude-plugin/stable'), { recursive: true });
-    const c = build(root);
-    expect(c.plugins.map((p) => p.stableVersion)).toEqual([null, null]);
-    expect(c.marketplace.stable).toBeNull();
-    expect(c.warnings.some((w) => w.includes('stable'))).toBe(true);
-  });
 
   it('reads agent frontmatter that is not valid YAML because of an unquoted ": " in the description', () => {
     const root = copyFixture();

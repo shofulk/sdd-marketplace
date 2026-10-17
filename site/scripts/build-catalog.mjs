@@ -1,19 +1,20 @@
 #!/usr/bin/env node
-// Builds the catalog the site renders: reads the repository's marketplace file, the stable
-// marketplace file, and each plugin's plugin.json, agents/, skills/, hooks/hooks.json, README.md
-// and CHANGELOG.md, and writes one JSON file in the shape of site/src/types.ts (spec §3.8).
+// Builds the catalog the site renders: reads the repository's marketplace file and each plugin's
+// plugin.json, agents/, skills/, hooks/hooks.json, README.md and CHANGELOG.md, plus the `stable`
+// branch's marketplace name and plugin versions, and writes one JSON file in the shape of
+// site/src/types.ts (spec §3.8; the stable channel is a branch per findings SDD-001).
 //
-//   node scripts/build-catalog.mjs --root <repo> --out <file> [--stable <path relative to root>]
+//   node scripts/build-catalog.mjs --root <repo> --out <file>
 //
 // Problems that make the catalog wrong throw (exit 1); missing optional files are warnings.
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 
-export const DEFAULT_STABLE_PATH = '.claude-plugin/stable/marketplace.json';
+export const STABLE_BRANCH = 'stable';
 const KIND_ORDER = { skill: 0, agent: 1, hook: 2 };
 
 const posix = (p) => p.split(sep).join('/');
@@ -214,43 +215,57 @@ function githubRepo(repository) {
   return m ? `${m[1]}/${m[2]}` : null;
 }
 
-function gitSha(root) {
+/** Runs git in root; its stdout, or null when git fails. */
+function git(root, args) {
   try {
-    return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim() || null;
+    return execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
   } catch {
     return null;
   }
 }
 
-/** The stable channel: its marketplace name and path, and the version each entry's ref pins. */
-function stableChannel(root, stablePath, names, warnings) {
-  const file = resolve(root, stablePath);
-  const data = readJson(file, stablePath);
-  const versions = new Map();
-  if (!data) {
-    warnings.push(`no stable marketplace file at ${stablePath}: every plugin shows stable: not released`);
-    return { versions, channel: null };
-  }
-  if (!data.name) warnings.push(`stable file ${stablePath} has no name`);
-  const channel = { name: String(data.name ?? ''), path: posix(relative(root, file)) };
-  for (const entry of Array.isArray(data.plugins) ? data.plugins : []) {
-    const name = entry?.name;
-    const ref = entry?.source?.ref ?? entry?.ref;
-    if (!names.includes(name)) {
-      warnings.push(`stable file entry ${name} is not in the marketplace`);
-      continue;
-    }
-    const m = typeof ref === 'string' ? new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}--v(.+)$`).exec(ref) : null;
-    if (!m) {
-      warnings.push(`stable file entry ${name}: ref ${ref ?? '(none)'} is not ${name}--v<version>`);
-      continue;
-    }
-    versions.set(name, m[1]);
-  }
-  return { versions, channel };
+function gitSha(root) {
+  return git(root, ['rev-parse', 'HEAD'])?.trim() || null;
 }
 
-export function buildCatalog({ root, stablePath = DEFAULT_STABLE_PATH, sha, now } = {}) {
+/**
+ * The stable channel (findings SDD-001): the `stable` branch, published under its own marketplace
+ * name. A plugin's stable version is the version in its plugin.json on that branch; no branch, or
+ * no plugin.json there, means not released. Only the repository whose root is `root` is asked: a
+ * root nested in another repository (a test fixture) must not read the outer repository's branch.
+ */
+function stableChannel(root, plugins, warnings) {
+  const versions = new Map();
+  const none = (why) => {
+    warnings.push(`${why}: every plugin shows stable: not released`);
+    return { versions, channel: null };
+  };
+  const top = git(root, ['rev-parse', '--show-toplevel'])?.trim();
+  if (!top || realpathSync(top) !== realpathSync(root)) return none(`${root} is not the root of a git repository, so there is no ${STABLE_BRANCH} branch`);
+  const ref = [`refs/heads/${STABLE_BRANCH}`, `refs/remotes/origin/${STABLE_BRANCH}`]
+    .find((r) => git(root, ['rev-parse', '--verify', '--quiet', r]) !== null);
+  if (!ref) return none(`no stable branch (${STABLE_BRANCH} or origin/${STABLE_BRANCH})`);
+
+  const readJsonAt = (path) => {
+    const text = git(root, ['show', `${ref}:${path}`]);
+    if (text === null) return null;
+    try {
+      return JSON.parse(text);
+    } catch {
+      warnings.push(`${path} on the ${STABLE_BRANCH} branch is not valid JSON`);
+      return null;
+    }
+  };
+  const market = readJsonAt('.claude-plugin/marketplace.json');
+  if (!market?.name) warnings.push(`the ${STABLE_BRANCH} branch has no marketplace name in .claude-plugin/marketplace.json`);
+  for (const p of plugins) {
+    const manifest = readJsonAt(`${p.path}/.claude-plugin/plugin.json`);
+    if (manifest?.version) versions.set(p.name, String(manifest.version));
+  }
+  return { versions, channel: { branch: STABLE_BRANCH, name: String(market?.name ?? '') } };
+}
+
+export function buildCatalog({ root, sha, now } = {}) {
   root = resolve(root);
   const warnings = [];
   const marketFile = '.claude-plugin/marketplace.json';
@@ -314,7 +329,7 @@ export function buildCatalog({ root, stablePath = DEFAULT_STABLE_PATH, sha, now 
       if (!names.includes(d.name)) warnings.push(`${p.name}: dependency ${d.name} is not in this marketplace`);
     }
   }
-  const stable = stableChannel(root, stablePath, names, warnings);
+  const stable = stableChannel(root, plugins, warnings);
 
   const repo = process.env.GITHUB_REPOSITORY || plugins.map((p) => githubRepo(p.repository)).find(Boolean) || null;
   const owner = typeof market.owner === 'string' ? market.owner : market.owner?.name ?? '';
@@ -334,19 +349,19 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i += 2) {
     const key = argv[i];
     const value = argv[i + 1];
-    if (!['--root', '--out', '--stable'].includes(key) || value === undefined) {
-      throw new Error(`usage: build-catalog.mjs --root <dir> --out <file> [--stable <path>] (bad argument ${key})`);
+    if (!['--root', '--out'].includes(key) || value === undefined) {
+      throw new Error(`usage: build-catalog.mjs --root <dir> --out <file> (bad argument ${key})`);
     }
     args[key.slice(2)] = value;
   }
-  if (!args.root || !args.out) throw new Error('usage: build-catalog.mjs --root <dir> --out <file> [--stable <path>]');
+  if (!args.root || !args.out) throw new Error('usage: build-catalog.mjs --root <dir> --out <file>');
   return args;
 }
 
 function main() {
   try {
     const args = parseArgs(process.argv.slice(2));
-    const catalog = buildCatalog({ root: args.root, stablePath: args.stable });
+    const catalog = buildCatalog({ root: args.root });
     const out = resolve(args.out);
     mkdirSync(dirname(out), { recursive: true });
     writeFileSync(out, `${JSON.stringify(catalog, null, 2)}\n`);
