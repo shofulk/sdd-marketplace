@@ -1,0 +1,10 @@
+{
+  "name": "sdd-stable",
+  "owner": { "name": "acme" },
+  "plugins": [
+    {
+      "name": "sdd-engineering",
+      "source": { "source": "github", "repo": "acme/sdd-marketplace", "ref": "sdd-engineering--v1.0.0" }
+    }
+  ]
+}

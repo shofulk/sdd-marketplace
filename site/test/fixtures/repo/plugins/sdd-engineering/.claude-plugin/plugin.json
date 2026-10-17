@@ -1,0 +1,10 @@
+{
+  "name": "sdd-engineering",
+  "displayName": "SDD Engineering",
+  "version": "1.1.0",
+  "description": "Spec Driven Development: spec, plan, run the plan, retro.",
+  "author": { "name": "acme" },
+  "repository": "https://github.com/acme/sdd-marketplace",
+  "keywords": ["sdd", "workflow"],
+  "dependencies": [{ "name": "research-tools", "version": "^1.0.0" }]
+}
