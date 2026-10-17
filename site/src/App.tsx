@@ -1,5 +1,7 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
+import { Header } from './components/Header';
 import { useCatalog } from './data/useCatalog';
+import { Home } from './screens/Home';
 import type { Catalog } from './types';
 
 function Placeholder({ title }: { title: string }) {
@@ -10,29 +12,21 @@ function Placeholder({ title }: { title: string }) {
   );
 }
 
-function Home() {
-  return (
-    <main className="w-home">
-      <section className="hero">
-        <h1>Spec Driven Development<br />for Claude Code</h1>
-      </section>
-    </main>
-  );
-}
-
 /** The catalog's screens for one loaded catalog. Rendered inside a router. */
 export function CatalogApp({ catalog }: { catalog: Catalog }) {
-  void catalog;
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/search" element={<Placeholder title="Search" />} />
-      <Route path="/plugin/:name" element={<Placeholder title="Plugin" />} />
-      <Route path="/plugin/:name/:kind/:item" element={<Placeholder title="Component" />} />
-      <Route path="/start" element={<Placeholder title="Connect the marketplace" />} />
-      <Route path="/news" element={<Placeholder title="What's new" />} />
-      <Route path="*" element={<Placeholder title="Not found" />} />
-    </Routes>
+    <>
+      <Header catalog={catalog} dark onOpenPalette={() => {}} onToggleTheme={() => {}} />
+      <Routes>
+        <Route path="/" element={<Home catalog={catalog} />} />
+        <Route path="/search" element={<Placeholder title="Search" />} />
+        <Route path="/plugin/:name" element={<Placeholder title="Plugin" />} />
+        <Route path="/plugin/:name/:kind/:item" element={<Placeholder title="Component" />} />
+        <Route path="/start" element={<Placeholder title="Connect the marketplace" />} />
+        <Route path="/news" element={<Placeholder title="What's new" />} />
+        <Route path="*" element={<Placeholder title="Not found" />} />
+      </Routes>
+    </>
   );
 }
 
