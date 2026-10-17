@@ -1,0 +1,20 @@
+{
+  "description": "Read-only Bash with the configured checks for architecture-reviewer; the SessionStart trace.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" checks --agents architecture-review:architecture-reviewer", "timeout": 15 }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/trace.mjs\"", "timeout": 15 }
+        ]
+      }
+    ]
+  }
+}
