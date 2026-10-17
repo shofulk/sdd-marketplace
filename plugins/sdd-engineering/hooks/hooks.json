@@ -1,0 +1,37 @@
+{
+  "description": "Per-agent Bash guards, the spec writer's scope and format checks, and the SessionStart trace.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" readonly --agents sdd-engineering:spec-creator,sdd-engineering:implementation-planner", "timeout": 15 },
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" checks --agents sdd-engineering:plan-verifier", "timeout": 15 },
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" implementer --agents sdd-engineering:implementer", "timeout": 15 }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/spec-guard.mjs\" --agents sdd-engineering:spec-creator", "timeout": 15 },
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/spec-lint.mjs\" pre", "timeout": 15 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/spec-lint.mjs\" post", "timeout": 15 }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/trace.mjs\"", "timeout": 15 }
+        ]
+      }
+    ]
+  }
+}
