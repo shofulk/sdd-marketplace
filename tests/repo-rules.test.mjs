@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PLUGINS_DIR = join(ROOT, 'plugins');
@@ -76,6 +77,17 @@ test('every marketplace entry has a plugin.json with the same name', () => {
 test('marketplace lists exactly the four plugins', () => {
   const names = marketplace().plugins.map((p) => p.name).sort();
   assert.deepEqual(names, [...EXPECTED].sort());
+});
+
+test('no tracked file carries a home directory path', () => {
+  const files = spawnSync('git', ['-C', ROOT, 'ls-files', '-z'], { encoding: 'utf8' }).stdout.split('\0').filter(Boolean);
+  assert.ok(files.length > 0, 'git ls-files listed nothing');
+  const hits = [];
+  for (const f of files) {
+    const text = readFileSync(join(ROOT, f), 'utf8');
+    if (/\/Users\/[^/\s"']+\/|\/home\/[^/\s"']+\//.test(text)) hits.push(f);
+  }
+  assert.deepEqual(hits, []);
 });
 
 test('no forbidden strings under plugins/', () => {
