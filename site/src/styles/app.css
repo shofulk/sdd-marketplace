@@ -50,6 +50,7 @@ main { margin: 0 auto; padding-inline: clamp(16px, 3vw, 22px); padding-block: 28
 .sec h2 { font-size: 16px; font-weight: 600; margin: 0; }
 .sec-head a { font-size: 12px; color: var(--text-dim); }
 .list { display: flex; flex-direction: column; gap: 8px; }
+.list.plain { list-style: none; margin: 0; padding: 0; }
 .row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 11px; text-align: left; width: 100%; }
 .row:hover { border-color: var(--border-strong); }
 .row .grow { flex: 1; min-width: 0; }
@@ -167,8 +168,8 @@ a.btn { display: inline-flex; align-items: center; color: var(--text); text-deco
 .panel { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 13px; padding: 20px 22px; }
 .panel p { margin: 0 0 12px; color: var(--text-dim); line-height: 1.65; max-width: 72ch; }
 .panel p:last-child { margin-bottom: 0; }
-.panel h1, .panel h2, .panel h3, .panel h4 { margin: 18px 0 8px; font-size: 15px; }
-.panel h1:first-child, .panel h2:first-child, .panel h3:first-child { margin-top: 0; }
+.panel h3, .panel h4, .panel h5, .panel h6 { margin: 18px 0 8px; font-size: 15px; }
+.panel h3:first-child, .panel h4:first-child, .panel h5:first-child, .panel h6:first-child { margin-top: 0; }
 .panel ul, .panel ol { color: var(--text-dim); margin: 0 0 12px; padding-left: 22px; }
 .panel code { font-family: var(--mono); font-size: 12.5px; }
 .panel pre { background: var(--term-bg); color: var(--term-fg); border-radius: 8px; padding: 10px 12px; overflow-x: auto; }
