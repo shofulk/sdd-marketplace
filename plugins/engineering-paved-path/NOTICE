@@ -2,3 +2,83 @@ engineering-paved-path — third-party notices
 
 This plugin contains files copied or adapted from the sources listed below. Each entry
 names the source path, its copyright line and its license; the license texts follow.
+
+1. DevDigest — https://github.com/ai-agentic-engineering-neo/dev-digest (read from the
+   fork https://github.com/shofulk/dev-digest). License: MIT.
+   Copyright (c) 2026 Ivan Lapa.
+
+   - skills/react-best-practices/      ← .claude/skills/react-best-practices/
+                                         (copied unchanged)
+   - skills/react-testing-library/     ← .claude/skills/react-testing-library/
+                                         (copied unchanged)
+   - skills/security/                  ← .claude/skills/security/
+                                         (copied; one example path generalized)
+   - skills/frontend-ui-architecture/  ← .claude/skills/frontend-ui-architecture/
+                                         (copied; "server/client" wording and a pointer to the source project's research notes changed (added in the fork by shofulk))
+   - skills/onion-architecture/        ← .claude/skills/onion-architecture/
+                                         (adapted: the project's ring map, file paths, debt list and baseline removed; the rules, ring definitions and dependency-cruiser enforcement kept and generalized (added in the fork by shofulk))
+   - skills/fastify-best-practices/    ← .claude/skills/fastify-best-practices/
+                                         (copied unchanged; originally from mcollina/skills, see below)
+   - hooks/lib/shell-words.mjs         ← .claude/hooks/pr-gate.sh
+                                         (adapted: the inline command matcher (stripHeredocs, segments, tokens), extended)
+   - hooks/lib/bash-guard.mjs          ← .claude/hooks/scope-guard.sh, .claude/hooks/implementer-guard.sh
+                                         (adapted: the `bash readonly` / `bash checks` grammars and the implementer deny-list, without project-specific entries)
+
+2. mcollina/skills — https://github.com/mcollina/skills, path skills/fastify/
+   (the origin recorded in DevDigest's skills-lock.json). License: MIT.
+   Copyright (c) 2026 Matteo Collina.
+
+   - skills/fastify-best-practices/ (all files)
+
+skills/nextjs-app-router/ is original to this plugin: written from the Next.js 15
+documentation (https://nextjs.org/docs/15), with links; it copies no text from any skill.
+
+----------------------------------------------------------------------
+DevDigest
+
+MIT License
+
+Copyright (c) 2026 Ivan Lapa
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+----------------------------------------------------------------------
+mcollina/skills
+
+MIT License
+
+Copyright (c) 2026 Matteo Collina
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
