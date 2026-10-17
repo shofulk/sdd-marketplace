@@ -1,7 +1,7 @@
 ---
 name: run-plan
-description: Runs the execution half of Spec Driven Development for one feature whose approved plan already exists — lanes (interface → red tests → implementation), the full checks gate, manual acceptance, the parallel review round (architecture, plan traceability, and security when the project has a security reviewer), and fix rounds until the reviewers are clean, then the finish steps. Takes a spec or plan path, optional extra notes and optional designs. Does NOT run spec-creator or implementation-planner — those are run before it. Invoke only when the user types /sdd-engineering:run-plan.
-argument-hint: <spec-or-plan path> [notes: "<extra requirements>"] [design: <png|url> …] [--rounds N] [--resume] [--from lanes|gate|review|fix|finish]
+description: "Runs the execution half of Spec Driven Development for one feature whose approved plan already exists — lanes (interface → red tests → implementation), the full checks gate, manual acceptance, the parallel review round (architecture, plan traceability, and security when the project has a security reviewer), and fix rounds until the reviewers are clean, then the finish steps. Takes a spec or plan path, optional extra notes and optional designs. Does NOT run spec-creator or implementation-planner — those are run before it. Invoke only when the user types /sdd-engineering:run-plan."
+argument-hint: '<spec-or-plan path> [notes: "<extra requirements>"] [design: <png|url> …] [--rounds N] [--resume] [--from lanes|gate|review|fix|finish]'
 disable-model-invocation: true
 ---
 

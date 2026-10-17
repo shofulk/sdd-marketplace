@@ -1,6 +1,6 @@
 ---
 name: nextjs-app-router
-description: Next.js 15 App Router rules — file conventions, the Server/Client Component boundary, data fetching and the Next.js 15 caching defaults, Server Functions, route handlers, error handling and metadata — each rule linked to the official Next.js 15 documentation. Use when writing, reviewing or planning code under a Next.js `app/` directory: adding a page, layout or route handler, deciding where 'use client' goes, fetching or caching data, writing a Server Action, handling errors, or adding metadata.
+description: "Next.js 15 App Router rules — file conventions, the Server/Client Component boundary, data fetching and the Next.js 15 caching defaults, Server Functions, route handlers, error handling and metadata — each rule linked to the official Next.js 15 documentation. Use when writing, reviewing or planning code under a Next.js `app/` directory: adding a page, layout or route handler, deciding where 'use client' goes, fetching or caching data, writing a Server Action, handling errors, or adding metadata."
 ---
 
 # Next.js App Router (Next.js 15)

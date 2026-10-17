@@ -5,3 +5,4 @@ evals/results/
 plugins/*/evals/results/
 site/dist/
 site/public/catalog.json
+.claude/worktrees/

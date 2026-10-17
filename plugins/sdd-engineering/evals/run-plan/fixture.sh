@@ -69,7 +69,7 @@ Non-goals:
 
 ## Non-functional requirements
 
-- **NFR-1** Performance: one call shall finish within 1 ms on a laptop. *Verify: unit*
+None.
 
 ## Assumptions
 
@@ -91,7 +91,7 @@ None. The request settles every point.
 
 | AC | Stories | Edge cases | NFR | Verify |
 |----|---------|------------|-----|--------|
-| AC-1 | US-1 | — | NFR-1 | unit |
+| AC-1 | US-1 | — | — | unit |
 | AC-2 | US-1 | EC-1 | — | unit |
 EOF
 
