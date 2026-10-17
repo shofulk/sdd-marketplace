@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.293",
+  "startedAt": "2026-10-17T18:19:31.376Z",
+  "durationSeconds": 135,
+  "costUsd": 1.1349019999999999,
+  "partial": false,
+  "suite": {
+    "root": "/private/var/folders/g2/kyl2ypyx7dx7qhwcm3f9zr1r0000gn/T/sdd-eval-rerun-SH4j/plugins",
+    "ablation": "none",
+    "caseFilter": "run-plan",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "engineering-paved-path",
+        "version": "1.0.0",
+        "path": "/private/var/folders/g2/kyl2ypyx7dx7qhwcm3f9zr1r0000gn/T/sdd-eval-rerun-SH4j/plugins/engineering-paved-path"
+      },
+      {
+        "name": "research-tools",
+        "version": "1.0.0",
+        "path": "/private/var/folders/g2/kyl2ypyx7dx7qhwcm3f9zr1r0000gn/T/sdd-eval-rerun-SH4j/plugins/research-tools"
+      },
+      {
+        "name": "architecture-review",
+        "version": "1.0.0",
+        "path": "/private/var/folders/g2/kyl2ypyx7dx7qhwcm3f9zr1r0000gn/T/sdd-eval-rerun-SH4j/plugins/architecture-review"
+      },
+      {
+        "name": "sdd-engineering",
+        "version": "1.0.0",
+        "path": "/private/var/folders/g2/kyl2ypyx7dx7qhwcm3f9zr1r0000gn/T/sdd-eval-rerun-SH4j/plugins/sdd-engineering"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "run-plan",
+      "dir": "sdd-engineering/evals/run-plan",
+      "source": "mixed",
+      "promptMarkdown": "/sdd-engineering:run-plan docs/plans/greet.plan.md",
+      "runsPerCase": 1,
+      "timeoutSeconds": 3000,
+      "maxTurns": 120,
+      "graders": [
+        {
+          "name": "plan-verified",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": ".sdd/runs/greet/state.md"
+            },
+            "pattern": "^Plan verification: 2/2$",
+            "flags": "m",
+            "match": "contains"
+          }
+        },
+        {
+          "name": "status-done",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": {
+              "source": "file",
+              "path": ".sdd/runs/greet/state.md"
+            },
+            "pattern": "^Status: done$",
+            "flags": "m",
+            "match": "contains"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 5,
+            "costUsd": 1.1349019999999999,
+            "judgeCostUsd": 0,
+            "durationSeconds": 135,
+            "startedAt": "2026-10-17T18:19:31.402Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-eHufmo/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "plan-verified",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched ^Plan verification: 2/2$",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "status-done",
+                "passed": true,
+                "weight": 1,
+                "explanation": "matched ^Status: done$",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 1,
+    "overallScore": 1,
+    "overallPassRate": 1
+  }
+}
