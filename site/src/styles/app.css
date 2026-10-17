@@ -194,7 +194,9 @@ a.btn { display: inline-flex; align-items: center; color: var(--text); text-deco
 .pill { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border-radius: 7px; background: var(--bg-elev); border: 1px solid var(--border); color: var(--text-dim); }
 
 .page-title { font-size: 26px; letter-spacing: -.02em; margin: 0 0 6px; }
-.steps { display: flex; flex-direction: column; gap: 14px; }
+.page-title.spaced { margin-bottom: 18px; }
+.p-desc.lead { margin-bottom: 26px; }
+.steps { display: flex; flex-direction: column; gap: 14px; list-style: none; margin: 0; padding: 0; }
 .step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 14px; align-items: start; }
 .step .n { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-family: var(--mono); font-weight: 600; background: color-mix(in oklab, var(--accent) 16%, var(--bg-elev)); color: var(--accent); }
 .step .txt { min-width: 0; }

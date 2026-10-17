@@ -58,6 +58,41 @@ export function topKeywords(catalog: Catalog, n: number): string[] {
   return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([k]) => k);
 }
 
+/** Every plugin a plugin pulls in, directly or through its dependencies (catalog plugins only). */
+export function transitiveDependencies(catalog: Catalog, name: string): string[] {
+  const byName = new Map(catalog.plugins.map((p) => [p.name, p]));
+  const seen = new Set<string>();
+  const walk = (n: string) => {
+    for (const d of byName.get(n)?.dependencies ?? []) {
+      if (byName.has(d.name) && d.name !== name && !seen.has(d.name)) {
+        seen.add(d.name);
+        walk(d.name);
+      }
+    }
+  };
+  walk(name);
+  return [...seen];
+}
+
+/** The plugin to install first: one nobody depends on that brings the most others with it. */
+export function entryPlugin(catalog: Catalog): Plugin | null {
+  const dependedOn = new Set(catalog.plugins.flatMap((p) => p.dependencies.map((d) => d.name)));
+  const roots = catalog.plugins.filter((p) => !dependedOn.has(p.name));
+  const pool = roots.length ? roots : catalog.plugins;
+  let best: Plugin | null = null;
+  let most = -1;
+  for (const p of pool) {
+    const n = transitiveDependencies(catalog, p.name).length;
+    if (n > most) { best = p; most = n; }
+  }
+  return best;
+}
+
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+export function numberWord(n: number): string {
+  return WORDS[n] ?? String(n);
+}
+
 export function allKeywords(catalog: Catalog): string[] {
   return [...new Set(catalog.plugins.flatMap((p) => p.keywords))];
 }
