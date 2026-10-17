@@ -1,0 +1,9 @@
+{
+  "name": "sdd",
+  "owner": { "name": "acme" },
+  "description": "Fixture marketplace for the catalog build tests.",
+  "plugins": [
+    { "name": "sdd-engineering", "source": "./plugins/sdd-engineering", "description": "Spec, plan, run, retro." },
+    { "name": "research-tools", "source": "./plugins/research-tools", "description": "A read-only researcher." }
+  ]
+}

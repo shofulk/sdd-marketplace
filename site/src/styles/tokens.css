@@ -1,0 +1,40 @@
+/* Design tokens and base styles, after the approved prototype (itself after the lecture's catalog).
+   Dark first; light from the system preference unless data-theme on <html> overrides it. */
+:root {
+  color-scheme: dark;
+  --bg:#0b0c0f; --bg-elev:#101217; --bg-elev2:#161920; --bg-hover:#1c2029;
+  --border:#23262f; --border-strong:#353a46; --text:#e8eaef; --text-dim:#9aa2b0; --text-faint:#6c7380;
+  --accent:oklch(0.68 0.15 255); --accent-fg:#fff; --term-bg:#05060a; --term-fg:#cfe6ee; --warn:oklch(0.8 0.13 80);
+  --kind-plugin:oklch(0.72 0.15 255); --kind-skill:oklch(0.74 0.14 158); --kind-agent:oklch(0.72 0.15 305); --kind-hook:oklch(0.78 0.14 115);
+  --sans:'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg:#f6f7f9; --bg-elev:#ffffff; --bg-elev2:#ffffff; --bg-hover:#eef0f4;
+    --border:#e2e5ea; --border-strong:#c9cdd6; --text:#161a20; --text-dim:#545c68; --text-faint:#7d8592;
+    --accent:oklch(0.55 0.17 255); --accent-fg:#fff; --term-bg:#11141a; --term-fg:#d6ebf2; --warn:oklch(0.55 0.13 70);
+    --kind-plugin:oklch(0.52 0.16 255); --kind-skill:oklch(0.5 0.14 158); --kind-agent:oklch(0.52 0.16 305); --kind-hook:oklch(0.5 0.14 132);
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:#f6f7f9; --bg-elev:#ffffff; --bg-elev2:#ffffff; --bg-hover:#eef0f4;
+  --border:#e2e5ea; --border-strong:#c9cdd6; --text:#161a20; --text-dim:#545c68; --text-faint:#7d8592;
+  --accent:oklch(0.55 0.17 255); --accent-fg:#fff; --term-bg:#11141a; --term-fg:#d6ebf2; --warn:oklch(0.55 0.13 70);
+  --kind-plugin:oklch(0.52 0.16 255); --kind-skill:oklch(0.5 0.14 158); --kind-agent:oklch(0.52 0.16 305); --kind-hook:oklch(0.5 0.14 132);
+}
+:root[data-theme="dark"] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-decoration: none; cursor: pointer; }
+a:hover { text-decoration: underline; }
+button, input, select { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; }
+.mono { font-family: var(--mono); }
+.num { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
