@@ -23,6 +23,14 @@ names the source path, its copyright line and its license; the license texts fol
                                                            (adapted: spec folders and package tags from .sdd/config.json)
    - skills/mermaid-diagram/                             ← .claude/skills/mermaid-diagram/
                                                            (copied; `user-invocable: false` added and a pointer to a missing references.md removed)
+   - skills/run-plan/                                    ← .claude/skills/sdd-run/
+                                                           (adapted: the project contract, namespaced agents, optional project agents with fallbacks)
+   - scripts/checks.mjs                                  ← .claude/scripts/checks.sh
+                                                           (ported to Node)
+   - scripts/lane-brief.mjs                              ← .claude/scripts/lane-brief.mjs
+                                                           (copied; the usage comment and the brief footer name the plugin path)
+   - scripts/usage.mjs                                   ← .claude/scripts/harness-usage.mjs
+                                                           (adapted: plans folder from .sdd/config.json, namespaced agent types, a --feature filter)
    - hooks/spec-lint.mjs                                 ← .claude/hooks/spec-lint.mjs
                                                            (adapted: spec locations from .sdd/config.json)
    - hooks/spec-guard.mjs                                ← .claude/hooks/scope-guard.sh (`write spec`)
