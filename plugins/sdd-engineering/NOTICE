@@ -25,6 +25,8 @@ names the source path, its copyright line and its license; the license texts fol
                                                            (copied; `user-invocable: false` added and a pointer to a missing references.md removed)
    - skills/run-plan/                                    ← .claude/skills/sdd-run/
                                                            (adapted: the project contract, namespaced agents, optional project agents with fallbacks)
+   - skills/workflow-retro/SKILL.md                      ← .claude/skills/sdd-run/SKILL.md (Phase 6, step 6)
+                                                           (adapted; the retro and ledger layouts follow the structure of docs/retros/pr-brief.md and docs/retros/ledger.md, no content copied)
    - scripts/checks.mjs                                  ← .claude/scripts/checks.sh
                                                            (ported to Node)
    - scripts/lane-brief.mjs                              ← .claude/scripts/lane-brief.mjs
