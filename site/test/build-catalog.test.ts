@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { buildCatalog, excerpt, normalizeList } from '../scripts/build-catalog.mjs';
+import { buildCatalog, excerpt, normalizeList, parseChangelog } from '../scripts/build-catalog.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = join(here, 'fixtures', 'repo');
@@ -41,6 +41,7 @@ describe('buildCatalog on the fixture repository', () => {
     const c = build();
     expect(c.marketplace).toEqual({
       name: 'sdd', owner: 'acme', description: 'Fixture marketplace for the catalog build tests.', repo: 'acme/sdd-marketplace',
+      stable: { name: 'sdd-stable', path: '.claude-plugin/stable/marketplace.json' },
     });
     expect(c.build).toEqual({ sha: 'abc1234', builtAt: '2026-10-17T18:30:00.000Z' });
   });
@@ -139,7 +140,64 @@ describe('buildCatalog on the fixture repository', () => {
     rmSync(join(root, '.claude-plugin/stable'), { recursive: true });
     const c = build(root);
     expect(c.plugins.map((p) => p.stableVersion)).toEqual([null, null]);
+    expect(c.marketplace.stable).toBeNull();
     expect(c.warnings.some((w) => w.includes('stable'))).toBe(true);
+  });
+
+  it('reads agent frontmatter that is not valid YAML because of an unquoted ": " in the description', () => {
+    const root = copyFixture();
+    writeFileSync(join(root, 'plugins/research-tools/agents/lane.md'), [
+      '---',
+      'name: lane',
+      'description: Implements one lane. Use when: a plan is approved.',
+      'tools: [Read, Grep]',
+      'skills:',
+      '  - engineering-paved-path:onion-architecture',
+      '  - engineering-paved-path:frontend-ui-architecture',
+      'model: sonnet',
+      '---',
+      '',
+      'Body.',
+    ].join('\n'));
+    const c = build(root);
+    expect(comp(c, 'research-tools', 'lane')).toMatchObject({
+      description: 'Implements one lane. Use when: a plan is approved.',
+      tools: ['Read', 'Grep'],
+      skills: ['engineering-paved-path:onion-architecture', 'engineering-paved-path:frontend-ui-architecture'],
+      model: 'sonnet',
+      excerpt: 'Body.',
+    });
+    expect(c.warnings.some((w) => w.includes('agents/lane.md'))).toBe(true);
+  });
+
+  it('reads inline and block lists line by line when the frontmatter cannot be repaired', () => {
+    const root = copyFixture();
+    writeFileSync(join(root, 'plugins/research-tools/agents/odd.md'), [
+      '---',
+      'name: odd',
+      'description: "An unterminated quote',
+      'tools: [Read, Grep]',
+      'skills:',
+      '  - first',
+      '  - second',
+      '---',
+      'Body.',
+    ].join('\n'));
+    expect(comp(build(root), 'research-tools', 'odd')).toMatchObject({ tools: ['Read', 'Grep'], skills: ['first', 'second'] });
+  });
+
+  it('leaves table rows out of a changelog summary', () => {
+    expect(parseChangelog([
+      '## [1.0.0] - 2026-10-18',
+      '',
+      '### Added',
+      '- First release.',
+      '',
+      '### Verified with',
+      '| Plugin | Version |',
+      '|---|---|',
+      '| research-tools | 1.0.0 |',
+    ].join('\n'))).toEqual([{ version: '1.0.0', date: '2026-10-18', summary: 'First release.' }]);
   });
 
   it('throws when the CHANGELOG newest version differs from plugin.json', () => {

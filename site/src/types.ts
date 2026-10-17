@@ -4,7 +4,11 @@
 export type Kind = 'skill' | 'agent' | 'hook';
 
 export interface Catalog {
-  marketplace: { name: string; owner: string; description: string; repo: string | null }; // repo "owner/name"
+  marketplace: {
+    name: string; owner: string; description: string;
+    repo: string | null; // "owner/name"
+    stable: { name: string; path: string } | null; // the stable marketplace file's own name and its repo path; null = none
+  };
   build: { sha: string; builtAt: string }; // ISO time
   plugins: Plugin[];
   warnings: string[];

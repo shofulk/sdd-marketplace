@@ -71,6 +71,17 @@ describe('PluginPage', () => {
       .toHaveAttribute('href', 'https://github.com/shofulk/sdd-marketplace/blob/main/plugins/sdd-engineering/docs/guide.md');
   });
 
+  it('renders GitHub-flavoured Markdown in the README: tables and bare URLs', () => {
+    renderAt('#/plugin/sdd-engineering', withPlugin('sdd-engineering', {
+      readme: '| Plugin | Range |\n|---|---|\n| research-tools | ^1.0.0 |\n\nDocs: https://example.com/docs\n',
+    }));
+    const readme = section('README');
+    const table = within(readme).getByRole('table');
+    expect(within(table).getAllByRole('row')).toHaveLength(2);
+    expect(within(table).getByRole('cell', { name: 'research-tools' })).toBeInTheDocument();
+    expect(within(readme).getByRole('link', { name: 'https://example.com/docs' })).toHaveAttribute('href', 'https://example.com/docs');
+  });
+
   it('lists the changelog with the stable and latest marks', () => {
     renderAt('#/plugin/sdd-engineering');
     const entries = within(section('Changelog')).getAllByRole('listitem');

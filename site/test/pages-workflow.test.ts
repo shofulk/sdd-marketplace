@@ -32,6 +32,8 @@ describe('pages workflow', () => {
     expect(buildJob).toBeDefined();
     expect(usesStep(buildJob, 'actions/checkout')?.with?.['fetch-depth']).toBe(0);
     expect(usesStep(buildJob, 'actions/setup-node')?.with?.['node-version-file']).toBe('site/.nvmrc');
+    // .nvmrc says 22; jsdom needs >= 22.22.2, so do not settle for an older cached 22.x on the runner
+    expect(usesStep(buildJob, 'actions/setup-node')?.with?.['check-latest']).toBe(true);
     for (const cmd of ['npm ci', 'npm run build']) {
       const step = runStep(buildJob, cmd);
       expect(step, cmd).toBeDefined();

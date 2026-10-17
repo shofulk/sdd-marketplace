@@ -203,6 +203,7 @@ a.btn { display: inline-flex; align-items: center; color: var(--text); text-deco
 .step h3 { margin: 4px 0 6px; font-size: 15px; }
 .step p { margin: 0 0 8px; color: var(--text-dim); max-width: 68ch; }
 pre.code { margin: 0; background: var(--term-bg); color: var(--term-fg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: var(--mono); font-size: 12.5px; overflow-x: auto; }
+.code-rows { display: flex; flex-direction: column; gap: 8px; }
 .code-row { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
 .code-row pre { flex: 1 1 260px; min-width: 0; }
 .code-row .btn { height: auto; min-height: 40px; }

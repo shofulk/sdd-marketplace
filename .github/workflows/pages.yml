@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: site/.nvmrc
+          # .nvmrc says 22; vitest's jsdom needs >= 22.22.2, so take the newest 22.x, not an older cached one
+          check-latest: true
           cache: npm
           cache-dependency-path: site/package-lock.json
       - name: Install

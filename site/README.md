@@ -13,7 +13,7 @@ shape of `src/types.ts`:
 | Source | What it gives |
 |---|---|
 | `.claude-plugin/marketplace.json` | the marketplace name, owner, description and its plugins (relative `source` paths) |
-| `.claude-plugin/stable/marketplace.json` | each plugin's stable version, from the entry's `source.ref` = `<plugin>--v<version>`; no file means "stable: not released" |
+| `.claude-plugin/stable/marketplace.json` | the stable channel's name and path (Getting started), and each plugin's stable version from the entry's `source.ref` = `<plugin>--v<version>`; no file means "stable: not released" |
 | `plugins/<p>/.claude-plugin/plugin.json` | name, displayName, version (= latest), description, author, keywords, dependencies, repository |
 | `plugins/<p>/agents/*.md` | agents: frontmatter `name`, `description`, `tools`, `model`, `skills`; the first two paragraphs of the body |
 | `plugins/<p>/skills/<s>/SKILL.md` | skills: frontmatter `name`, `description`, `user-invocable`; the first two paragraphs |
@@ -22,7 +22,9 @@ shape of `src/types.ts`:
 
 The build stops with an error when a marketplace entry has no `plugin.json`, when its `plugin.json` names
 another plugin, or when a CHANGELOG's newest version differs from `plugin.json`. Missing READMEs,
-CHANGELOGs, display names, components or the stable file are warnings. The commit SHA comes from
+CHANGELOGs, display names, components or the stable file are warnings, and so is frontmatter that is
+not valid YAML (most often an unquoted `: ` in a description), which is then read with its plain values
+quoted, or line by line. The commit SHA comes from
 `GITHUB_SHA`, else `git rev-parse HEAD`; the GitHub repository from `GITHUB_REPOSITORY`, else the first
 plugin's `repository` URL.
 

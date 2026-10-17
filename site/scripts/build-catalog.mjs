@@ -36,22 +36,52 @@ export function normalizeList(value) {
   return items.map((v) => String(v).trim()).filter(Boolean);
 }
 
+const asObject = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
+
+/** Quotes every top-level plain scalar, the usual reason agent frontmatter is not YAML (`description: … Use when: …`). */
+function quotePlainScalars(yamlText) {
+  return yamlText.split(/\r?\n/).map((line) => {
+    const kv = /^([A-Za-z][\w-]*):[ \t]+(.+?)\s*$/.exec(line);
+    if (!kv || /^["'[{|>&*!#]/.test(kv[2])) return line;
+    return `${kv[1]}: ${JSON.stringify(kv[2])}`;
+  }).join('\n');
+}
+
+/** Last resort: `key: value`, `key: [a, b]` and `key:` followed by `  - item` lines. */
+function parseLines(yamlText) {
+  const data = {};
+  let listKey = null;
+  for (const line of yamlText.split(/\r?\n/)) {
+    const item = /^\s+-\s+(.*?)\s*$/.exec(line);
+    if (item && listKey) { data[listKey].push(item[1].replace(/^(['"])(.*)\1$/, '$2')); continue; }
+    const kv = /^([A-Za-z][\w-]*):\s*(.*?)\s*$/.exec(line);
+    listKey = null;
+    if (!kv) continue;
+    const value = kv[2];
+    if (value === '') { data[kv[1]] = []; listKey = kv[1]; }
+    else if (/^\[.*\]$/.test(value)) data[kv[1]] = normalizeList(value.slice(1, -1)).map((v) => v.replace(/^(['"])(.*)\1$/, '$2'));
+    else data[kv[1]] = value.replace(/^(['"])(.*)\1$/, '$2');
+  }
+  return data;
+}
+
 /** Splits a Markdown file into its YAML frontmatter and its body. */
 function frontmatter(text, file, warnings) {
   const m = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(text);
   if (!m) return { data: {}, body: text };
   const body = text.slice(m[0].length);
   try {
-    const data = parseYaml(m[1]);
-    return { data: data && typeof data === 'object' ? data : {}, body };
+    return { data: asObject(parseYaml(m[1])), body };
   } catch (e) {
-    warnings.push(`${file}: frontmatter is not valid YAML (${String(e.message).split('\n')[0]}); read line by line`);
-    const data = {};
-    for (const line of m[1].split(/\r?\n/)) {
-      const kv = /^([A-Za-z][\w-]*):\s*(.*)$/.exec(line);
-      if (kv) data[kv[1]] = kv[2].replace(/^(['"])(.*)\1$/, '$2');
+    const reason = String(e.message).split('\n')[0];
+    try {
+      const data = asObject(parseYaml(quotePlainScalars(m[1])));
+      warnings.push(`${file}: frontmatter is not valid YAML (${reason}); read with its plain values quoted`);
+      return { data, body };
+    } catch {
+      warnings.push(`${file}: frontmatter is not valid YAML (${reason}); read line by line`);
+      return { data: parseLines(m[1]), body };
     }
-    return { data, body };
   }
 }
 
@@ -105,7 +135,7 @@ export function parseChangelog(markdown) {
 
 function summarize(lines) {
   return lines
-    .filter((l) => l.trim() && !/^\s*#/.test(l) && !/^\s*\[[^\]]+\]:\s/.test(l))
+    .filter((l) => l.trim() && !/^\s*#/.test(l) && !/^\s*\[[^\]]+\]:\s/.test(l) && !/^\s*\|/.test(l))
     .map((l) => l.trim().replace(/^[-*+]\s+/, ''))
     .map((l) => (/[.!?:;]$/.test(l) ? l : `${l}.`))
     .join(' ');
@@ -192,14 +222,17 @@ function gitSha(root) {
   }
 }
 
-function stableVersions(root, stablePath, names, warnings) {
+/** The stable channel: its marketplace name and path, and the version each entry's ref pins. */
+function stableChannel(root, stablePath, names, warnings) {
   const file = resolve(root, stablePath);
   const data = readJson(file, stablePath);
   const versions = new Map();
   if (!data) {
     warnings.push(`no stable marketplace file at ${stablePath}: every plugin shows stable: not released`);
-    return versions;
+    return { versions, channel: null };
   }
+  if (!data.name) warnings.push(`stable file ${stablePath} has no name`);
+  const channel = { name: String(data.name ?? ''), path: posix(relative(root, file)) };
   for (const entry of Array.isArray(data.plugins) ? data.plugins : []) {
     const name = entry?.name;
     const ref = entry?.source?.ref ?? entry?.ref;
@@ -214,7 +247,7 @@ function stableVersions(root, stablePath, names, warnings) {
     }
     versions.set(name, m[1]);
   }
-  return versions;
+  return { versions, channel };
 }
 
 export function buildCatalog({ root, stablePath = DEFAULT_STABLE_PATH, sha, now } = {}) {
@@ -281,16 +314,17 @@ export function buildCatalog({ root, stablePath = DEFAULT_STABLE_PATH, sha, now 
       if (!names.includes(d.name)) warnings.push(`${p.name}: dependency ${d.name} is not in this marketplace`);
     }
   }
-  const stable = stableVersions(root, stablePath, names, warnings);
+  const stable = stableChannel(root, stablePath, names, warnings);
 
   const repo = process.env.GITHUB_REPOSITORY || plugins.map((p) => githubRepo(p.repository)).find(Boolean) || null;
   const owner = typeof market.owner === 'string' ? market.owner : market.owner?.name ?? '';
   return {
     marketplace: {
       name: String(market.name ?? ''), owner, description: String(market.description ?? market.metadata?.description ?? ''), repo,
+      stable: stable.channel,
     },
     build: { sha: sha || process.env.GITHUB_SHA || gitSha(root) || 'local', builtAt: (now ?? new Date()).toISOString() },
-    plugins: plugins.map(({ repository: _repository, ...p }) => ({ ...p, stableVersion: stable.get(p.name) ?? null })),
+    plugins: plugins.map(({ repository: _repository, ...p }) => ({ ...p, stableVersion: stable.versions.get(p.name) ?? null })),
     warnings,
   };
 }

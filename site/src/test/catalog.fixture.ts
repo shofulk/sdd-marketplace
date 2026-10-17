@@ -18,6 +18,7 @@ export const catalogFixture: Catalog = {
     owner: 'shofulk',
     description: 'Spec Driven Development plugins for Claude Code.',
     repo: 'shofulk/sdd-marketplace',
+    stable: { name: 'sdd-stable', path: '.claude-plugin/stable/marketplace.json' },
   },
   build: { sha: 'abc1234def5678', builtAt: '2026-10-17T18:30:00.000Z' },
   warnings: [],

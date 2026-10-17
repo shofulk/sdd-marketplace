@@ -27,7 +27,23 @@ describe('Start (getting started)', () => {
       },
     });
     expect(code[3]).toBe('claude plugin list --json');
-    for (const s of steps) expect(within(s).getByRole('button', { name: 'Copy' })).toBeInTheDocument();
+    for (const s of steps) expect(within(s).getAllByRole('button', { name: 'Copy' }).length).toBeGreaterThan(0);
+  });
+
+  it('takes the stable channel from the catalog and says how to install from it', () => {
+    renderAt('#/start', { ...catalogFixture, marketplace: { ...catalogFixture.marketplace, stable: { name: 'sdd-pinned', path: 'channels/stable.json' } } });
+    const step = within(screen.getByRole('list', { name: 'Steps' })).getAllByRole('listitem')[2];
+    const [snippet, install] = [...step.querySelectorAll('pre')].map((p) => p.textContent!);
+    expect(JSON.parse(snippet).extraKnownMarketplaces['sdd-pinned'].source.path).toBe('channels/stable.json');
+    expect(install).toBe('/plugin install sdd-engineering@sdd-pinned');
+    expect(within(step).getAllByRole('button', { name: 'Copy' })).toHaveLength(2);
+  });
+
+  it('says there is no stable release yet when the catalog has no stable channel', () => {
+    renderAt('#/start', { ...catalogFixture, marketplace: { ...catalogFixture.marketplace, stable: null } });
+    const step = within(screen.getByRole('list', { name: 'Steps' })).getAllByRole('listitem')[2];
+    expect(step).toHaveTextContent('No stable release yet: every plugin is on the latest channel.');
+    expect(step.querySelector('pre')).toBeNull();
   });
 
   it('names the entry plugin and how many plugins it brings', () => {

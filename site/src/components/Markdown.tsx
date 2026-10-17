@@ -1,17 +1,20 @@
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
-
 import type { Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 // The Markdown sits under the page's h2 section headings, so its own headings start at h3.
 const shifted: Components = { h1: 'h3', h2: 'h4', h3: 'h5', h4: 'h6', h5: 'h6' };
+const plugins = [remarkGfm];
 
 /**
- * Markdown from the plugin files, rendered without raw HTML. A relative link or image points at
- * the file on GitHub, next to the Markdown file it came from.
+ * Markdown from the plugin files, GitHub-flavoured (tables, autolinks, strikethrough, task lists)
+ * and rendered without raw HTML. A relative link or image points at the file on GitHub, next to
+ * the Markdown file it came from.
  */
 export function Markdown({ text, base }: { text: string; base: string | null }) {
   return (
     <ReactMarkdown
+      remarkPlugins={plugins}
       components={shifted}
       urlTransform={(url, key) => {
         const safe = defaultUrlTransform(url);
