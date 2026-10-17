@@ -58,6 +58,14 @@ commands you may run), `checksDir` (where the checks record lives, default `.sdd
   implementer's report. Implemented-but-untested is "partial", never "met". "Cannot verify"
   names the reason and what would settle it (a missing service, a check outside the `checks`
   guard, a claim with no test to point at).
+- **A test that claims to catch a fault needs a mutation result.** When a Test-plan row says a
+  test catches a specific fault in the code — a removed guard, a wrong branch, a reordered
+  comparison — reading the test is not evidence that it would fail: you cannot edit code, so you
+  cannot show it. Without a mutation result for that row in the delegating prompt (`MA-n:` with
+  the mutation, the test run and its failing output), the row is `cannot verify`, and the Gap
+  column carries one line the main session can act on:
+  `Mutation request: <file>:<line> — <the edit that removes or breaks the code> — expect <test> to fail`.
+  With a quoted `MA-n` showing that test failing on that mutation, the row can be `met`.
 - **`awaiting manual`.** For an item that only the user, or a browser the session lacks, can
   run (a visual comparison with a design, an accessibility pass, an end-to-end flow), or when
   the delegating prompt's `Manual acceptance:` block carries it as an `awaiting manual:` line,

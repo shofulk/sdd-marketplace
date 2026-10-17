@@ -65,6 +65,16 @@ test('spec-creator asks for researcher runs through the main session', () => {
   assert.match(read('agents/spec-creator.md'), /research-tools:researcher/);
 });
 
+test('spec-creator re-checks the draft with the plugin spec-lint (E2E-1)', () => {
+  assert.match(read('agents/spec-creator.md'), /node \$\{CLAUDE_PLUGIN_ROOT\}\/hooks\/spec-lint\.mjs check /);
+});
+
+test('plan-verifier never marks a fault-catching test met without a mutation result (E2E-3)', () => {
+  const t = read('agents/plan-verifier.md');
+  assert.match(t, /Mutation request:/);
+  assert.match(t, /`cannot verify`/);
+});
+
 test('the implementer loads the project skills its brief names through Skill', () => {
   assert.match(read('agents/implementer.md'), /`skills`/);
 });

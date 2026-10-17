@@ -52,6 +52,18 @@ test('specifies the run state lines', () => {
   assert.match(skill, /`runs`/);
 });
 
+test('runs plan-verifier mutation requests in a scratch copy (E2E-3)', () => {
+  assert.match(skill, /Mutation request/);
+  assert.match(skill, /scratch copy/);
+  assert.match(skill, /MA-/);
+});
+
+test('warns when the host does not ignore .sdd/ (E2E-2)', () => {
+  assert.match(skill, /git check-ignore -q \.sdd\/trace\.jsonl/);
+  assert.match(skill, /\.sdd\/\*/);
+  assert.match(skill, /!\.sdd\/config\.json/);
+});
+
 test('keeps resume, from and the round budget', () => {
   assert.match(skill, /--resume/);
   assert.match(skill, /--from/);

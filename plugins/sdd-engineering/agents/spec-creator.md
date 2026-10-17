@@ -128,7 +128,9 @@ report*. Follow `spec-writing` for the method of every step.
      slug and gets a new number.
    - All sections in order, item IDs, verify hints, traceability, `Status: draft`.
    - Every point still open gets `[NEEDS CLARIFICATION: Q-n]` in place (see *Hard rules*).
-   - Fix every error `spec-lint` reports.
+   - Fix every error `spec-lint` reports. It runs after every Write/Edit; to re-check the
+     whole draft yourself, run `node ${CLAUDE_PLUGIN_ROOT}/hooks/spec-lint.mjs check <spec path>`
+     (your Bash guard allows exactly this command).
 6. **Final self-check** (`spec-writing` §6) — go through all 12 items, fix what you can in
    the draft, and put the table into the report. An item you cannot fix becomes an open
    question.

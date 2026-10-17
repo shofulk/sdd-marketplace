@@ -16,6 +16,8 @@ function fixture(config) {
   mkdirSync(join(project, '.sdd'), { recursive: true });
   mkdirSync(join(pluginRoot, 'scripts'), { recursive: true });
   writeFileSync(join(pluginRoot, 'scripts', 'checks.mjs'), '');
+  mkdirSync(join(pluginRoot, 'hooks'), { recursive: true });
+  writeFileSync(join(pluginRoot, 'hooks', 'spec-lint.mjs'), '');
   if (config !== undefined) writeFileSync(join(project, '.sdd', 'config.json'), config);
   return { project, pluginRoot };
 }
@@ -45,6 +47,11 @@ const TABLE = [
   ['checks', 'x:a', 'x:a', 'npm test', CHECKS, 0],
   ['checks', 'x:a', 'x:a', 'npm test', undefined, 2],
   ['checks', 'x:a', 'x:a', 'node <CLAUDE_PLUGIN_ROOT>/scripts/checks.mjs status f', undefined, 0],
+  // E2E-1: a read-only agent re-checks a spec with the plugin's own spec-lint, `check` mode only.
+  ['readonly', 'x:a', 'x:a', 'node <CLAUDE_PLUGIN_ROOT>/hooks/spec-lint.mjs check specs/x.spec.md', undefined, 0],
+  ['checks', 'x:a', 'x:a', 'node <CLAUDE_PLUGIN_ROOT>/hooks/spec-lint.mjs check specs/x.spec.md', undefined, 0],
+  ['readonly', 'x:a', 'x:a', 'node <CLAUDE_PLUGIN_ROOT>/hooks/spec-lint.mjs pre', undefined, 2],
+  ['readonly', 'x:a', 'x:a', 'node /tmp/elsewhere/spec-lint.mjs check specs/x.spec.md', undefined, 2],
   ['implementer', 'x:i', 'x:i', 'git commit -m x', undefined, 2],
   ['implementer', 'x:i', 'x:i', 'ls && git push', undefined, 2],
   ['implementer', 'x:i', 'x:i', 'echo "git push"', undefined, 0],

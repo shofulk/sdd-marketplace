@@ -9,7 +9,8 @@
 // Profiles:
 //   readonly     allow-list: read-only heads with a per-head argument grammar, read-only git
 //                subcommands, no output redirection except /dev/null and fd duplication, no
-//                `tee`/`xargs`/`cd`, no command substitution, expansion, escape or unquoted glob.
+//                `tee`/`xargs`/`cd`, no command substitution, expansion, escape or unquoted glob;
+//                `node ${CLAUDE_PLUGIN_ROOT}/hooks/spec-lint.mjs check <spec>...` is allowed.
 //   checks       readonly, plus the exact commands of .sdd/config.json `checks` (run from the
 //                project root) and `node ${CLAUDE_PLUGIN_ROOT}/scripts/checks.mjs ...`.
 //   implementer  deny-list over an otherwise open Bash: no commit, push or other history change,
@@ -220,6 +221,12 @@ function readonlyVerdict(c, profile, ctx, depth) {
       for (const w of c.words) { const why = lexerReason(w); if (why) return why; }
       return null;
     }
+  }
+  // The plugin's own spec-lint in `check` mode only reads the specs it is given (E2E-1).
+  if (vals[0] === 'node' && vals.length >= 3 && vals[2] === 'check' && !c.assigns.length && ctx.pluginRoot &&
+      realOrResolved(vals[1]) === realOrResolved(join(ctx.pluginRoot, 'hooks', 'spec-lint.mjs'))) {
+    for (const w of c.words) { const why = lexerReason(w); if (why) return why; }
+    return null;
   }
   if (c.assigns.length && !(c.assigns.length === 1 && c.assigns[0] === 'CI=1')) {
     return `a leading \`${c.assigns.find((a) => a !== 'CI=1')}\` assignment is not allowed (only \`CI=1\`)`;

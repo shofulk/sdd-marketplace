@@ -120,6 +120,14 @@ Plugins: <name>@<version>, …
    probe only what manual acceptance will need (a running service, a container runtime), so
    Phase 3 knows what it can run.
 5. Classify `notes:`; check every `design:` path exists.
+   Then run `git check-ignore -q .sdd/trace.jsonl`. A non-zero exit means the project does not
+   ignore `.sdd/`, and the run files and the trace (local paths, session ids) would be committed
+   by a broad `git add`: tell the user to add these two lines to `.gitignore`, record it in the
+   run summary, and continue — it is a warning, not a stop:
+   ```
+   .sdd/*
+   !.sdd/config.json
+   ```
 6. Write `state.md` (`Phase: lanes`, `Status: running`, `Plan verification: 0/<n ACs>`, the
    `Plugins:` line), then print a five-line run summary (plan + revision, lanes and agents, red
    lane yes/no, environment, round budget) and start. Do not ask for confirmation — the user
@@ -171,6 +179,16 @@ change set (`prompts.md`). With no `security-reviewer`, the round is architectur
 the reports; set `Plan verification:` in `state.md` from plan-verifier's `AC summary:` line;
 then triage the reports (`triage.md`) into one numbered fix list. Clean on all reviewers →
 Phase 6. Set `Phase: review`.
+
+**Mutation requests.** plan-verifier cannot edit code, so a Test-plan row that claims a test
+catches a fault comes back `cannot verify` with a `Mutation request:` line. Run each one in a
+scratch copy, never in the working tree: `git worktree add --detach "$TMPDIR/<feature>-ma-<n>" HEAD`,
+apply the uncommitted change set there (`git diff HEAD | git -C <copy> apply`), make the edit the
+request names, run the test it names, keep the output, then
+`git worktree remove --force <copy>`. Record each as
+`MA-<n>: <mutation> — <test> — failed | passed — <the output line>` in the run's manual
+acceptance file and pass the lines to a plan-verifier delta run in `Manual acceptance:`. A
+mutation the test does not catch is a weak test: it goes to the fix list.
 
 ## Phase 5 — Fix rounds
 
