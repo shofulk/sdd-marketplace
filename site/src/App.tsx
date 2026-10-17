@@ -2,6 +2,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Header } from './components/Header';
 import { useCatalog } from './data/useCatalog';
 import { Home } from './screens/Home';
+import { Search } from './screens/Search';
 import type { Catalog } from './types';
 
 function Placeholder({ title }: { title: string }) {
@@ -19,7 +20,7 @@ export function CatalogApp({ catalog }: { catalog: Catalog }) {
       <Header catalog={catalog} dark onOpenPalette={() => {}} onToggleTheme={() => {}} />
       <Routes>
         <Route path="/" element={<Home catalog={catalog} />} />
-        <Route path="/search" element={<Placeholder title="Search" />} />
+        <Route path="/search" element={<Search catalog={catalog} />} />
         <Route path="/plugin/:name" element={<Placeholder title="Plugin" />} />
         <Route path="/plugin/:name/:kind/:item" element={<Placeholder title="Component" />} />
         <Route path="/start" element={<Placeholder title="Connect the marketplace" />} />
