@@ -1,10 +1,20 @@
 {
   "name": "engineering-paved-path",
   "displayName": "Engineering Paved Path",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Supplies the React, Next.js, Fastify, architecture, testing and security skills.",
-  "author": { "name": "shofulk" },
+  "author": {
+    "name": "shofulk"
+  },
   "repository": "https://github.com/shofulk/sdd-marketplace",
-  "keywords": ["react", "nextjs", "fastify", "architecture", "testing", "security", "skills"],
+  "keywords": [
+    "react",
+    "nextjs",
+    "fastify",
+    "architecture",
+    "testing",
+    "security",
+    "skills"
+  ],
   "dependencies": []
 }
