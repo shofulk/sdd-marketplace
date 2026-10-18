@@ -1,5 +1,5 @@
 {
-  "name": "sdd",
+  "name": "sdd-stable",
   "owner": { "name": "shofulk" },
   "description": "Spec-driven development for Claude Code: spec, plan, run and retro agents and skills, with the paved-path stack skills, a researcher and an architecture reviewer they build on.",
   "plugins": [
