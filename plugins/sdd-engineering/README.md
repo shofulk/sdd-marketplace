@@ -121,22 +121,37 @@ default branch. The **stable** channel is the `stable` branch, whose own root ca
 /plugin install sdd-engineering@sdd-stable
 ```
 
-or, for a whole project, in `.claude/settings.json`:
+or, for a whole project, in `.claude/settings.json` — the form
+`claude plugin install sdd-engineering@sdd-stable --scope project` writes:
 
 ```json
 {
   "extraKnownMarketplaces": {
     "sdd-stable": { "source": { "source": "github", "repo": "shofulk/sdd-marketplace", "ref": "stable" } }
   },
-  "enabledPlugins": { "sdd-engineering@sdd-stable": true }
+  "enabledPlugins": {
+    "sdd-engineering@sdd-stable": true,
+    "engineering-paved-path@sdd-stable": true,
+    "research-tools@sdd-stable": true,
+    "architecture-review@sdd-stable": true
+  }
 }
 ```
+
+Project settings declare the plugins; they do not install them. A `claude -p` session does not
+install them from these settings (measured on a real project, 2026-10-18), so each machine installs
+them once: `claude plugin marketplace add shofulk/sdd-marketplace#stable`, then
+`claude plugin install sdd-engineering@sdd-stable --scope project`. The three dependencies come
+with it, and the settings file stays as above. `claude plugin marketplace remove sdd-stable`
+removes the catalog from your user settings and also clears the project's `enabledPlugins` and
+`extraKnownMarketplaces`; restore the file from git after it.
 
 Claude Code has no release-channel concept and no downgrade command: going back to the stable
 version means switching to the `sdd-stable` catalog. (A second catalog file pinning release
 tags was measured not to pin the plugin it names, so the channel is a branch —
 `docs/spikes/2026-10-17-spikes.md`, C2.) Release tags `<plugin>--v<version>` are kept: the
-dependency ranges resolve against them. The `stable` branch is created at the first release.
+dependency ranges resolve against them. The `stable` branch was cut at the 1.0.0 release; a
+release moves it once its smoke eval is green.
 
 ## Guards
 

@@ -4,6 +4,22 @@ All notable changes to `sdd-engineering` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-10-18
+
+### Fixed
+
+- `/sdd-engineering:workflow-retro` compares an existing `ledger.md` table header with its own
+  and stops on a difference, showing both headers, instead of appending a row whose cells land
+  under the wrong columns (found when installing into a project whose ledger had 14 columns).
+
+### Changed
+
+- README, *The stable channel*: the project settings example enables the three dependencies
+  too (the form `claude plugin install --scope project` writes); project settings do not install
+  the plugins in a `claude -p` session, so the README gives the two install commands;
+  `claude plugin marketplace remove` also clears the project's plugin settings; the `stable`
+  branch exists and moves after a release's smoke eval.
+
 ## [1.0.0] - 2026-10-17
 
 ### Added
