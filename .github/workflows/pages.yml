@@ -2,10 +2,10 @@
 # Pages serves only / or /docs from a branch, so site/ is deployed by Actions (spec §3.8).
 name: Catalog to Pages
 
+# Not on tag pushes: the github-pages environment deploys only from main, and a release pushes main.
 on:
   push:
     branches: [main]
-    tags: ['*']
   workflow_dispatch:
 
 permissions:

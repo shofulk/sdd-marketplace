@@ -293,7 +293,8 @@ Changelog); `sdd-engineering`'s also lists, per release, the dependency versions
     and has no single-page fallback, so routing uses `HashRouter`; Vite's `base` is
     `/sdd-marketplace/` for the project-page subpath. Search runs in the browser over `catalog.json`
     (the library is the builder's).
-  - **CI**: `.github/workflows/pages.yml` runs on every push to `main` and every tag push:
+  - **CI**: `.github/workflows/pages.yml` runs on every push to `main` (tag pushes dropped on
+    2026-10-19: the `github-pages` environment deploys only from `main`, and a release pushes it):
     `build-catalog` → `npm ci && vite build` → the Pages deploy action. **[measured, docs: GitHub
     Pages]** A branch deploy serves only `/` or `/docs`, so `site/` needs the Actions deploy. The build
     fails if a version in `catalog.json` differs from its `plugin.json`.

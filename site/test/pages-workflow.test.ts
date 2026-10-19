@@ -19,9 +19,11 @@ const deployJob = Object.values(jobs).find((j) => usesStep(j, 'actions/deploy-pa
 const buildName = Object.keys(jobs).find((k) => jobs[k] === buildJob)!;
 
 describe('pages workflow', () => {
-  it('runs on every push to main and every tag push', () => {
+  // The github-pages environment deploys only from main, so a tag push's deploy is refused; a
+  // release pushes main anyway, and that push rebuilds the catalog.
+  it('runs on every push to main, not on tag pushes', () => {
     expect(workflow.on.push.branches).toEqual(['main']);
-    expect(workflow.on.push.tags).toEqual(['*']);
+    expect(workflow.on.push.tags).toBeUndefined();
   });
 
   it('grants pages: write and id-token: write', () => {

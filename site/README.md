@@ -44,11 +44,11 @@ npm run catalog   # only write public/catalog.json
 
 ## Deploy
 
-`.github/workflows/pages.yml` runs on every push to `main` and every tag push: a full checkout plus the
+`.github/workflows/pages.yml` runs on every push to `main` (and by hand): a full checkout plus the
 `stable` branch, `npm ci`, `npm run build` (which runs build-catalog first), `npm test`, then uploads
 `site/dist` and deploys it with the Pages action. The site lives at `https://<owner>.github.io/sdd-marketplace/`: Vite's `base` is
 `/sdd-marketplace/`, and routing uses a hash router because Pages has no single-page fallback.
 
-Turning Pages on is a repository setting (Settings → Pages → Source: GitHub Actions). For tag pushes to
-deploy, the `github-pages` environment must allow tags as well as `main` (Settings → Environments →
-github-pages → Deployment branches and tags).
+Turning Pages on is a repository setting (Settings → Pages → Source: GitHub Actions). Tag pushes do not
+run it: the `github-pages` environment deploys only from `main`, and a release pushes `main` anyway.
+To rebuild without a push: `gh workflow run pages.yml`.
