@@ -278,7 +278,8 @@ Changelog); `sdd-engineering`'s also lists, per release, the dependency versions
       the stable version;
     - component page (skill, agent, hook) — how to invoke it (`/sdd-engineering:run-plan`,
       `@agent-sdd-engineering:implementer`), tools, model, the first paragraphs of its body;
-    - getting started — add the marketplace, install, the stable channel;
+    - getting started — add the marketplace, install, the stable channel, switching channels (added
+      2026-10-19, from the rollback rehearsal);
     - what's new.
 
     Also a ⌘K palette, a light/dark theme, copy buttons, and the build's commit SHA and time.
