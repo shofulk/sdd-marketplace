@@ -52,6 +52,8 @@ describe('Start (getting started)', () => {
         'claude plugin install sdd-engineering@sdd --scope project',
       ].join('\n'),
       [
+        // the stable marketplace may never have been added (a user hit `not found in marketplace`)
+        'claude plugin marketplace add shofulk/sdd-marketplace#stable',
         'claude plugin uninstall sdd-engineering@sdd --scope project',
         'claude plugin prune --scope project -y',
         'claude plugin install sdd-engineering@sdd-stable --scope project',
@@ -69,6 +71,7 @@ describe('Start (getting started)', () => {
     expect(Object.keys(JSON.parse(settings).enabledPlugins)).toEqual(['sdd-engineering@sdd-pinned', 'research-tools@sdd-pinned']);
     expect(within(steps()[2]).getAllByRole('button', { name: 'Copy' })).toHaveLength(3);
     expect(codeOf(steps()[3])[1]).toContain('claude plugin install sdd-engineering@sdd-pinned --scope project');
+    expect(codeOf(steps()[3])[1].split('\n')[0]).toBe('claude plugin marketplace add shofulk/sdd-marketplace#pinned');
   });
 
   it('says there is no stable release yet and drops the channel switch when the catalog has no stable channel', () => {

@@ -80,7 +80,8 @@ export function Start({ catalog }: { catalog: Catalog }) {
         text: 'There is no channel switch or downgrade command: uninstall, prune, install from the other marketplace. To latest, then back to stable; without -y the old channel’s dependencies stay enabled.',
         code: [
           [`claude plugin marketplace add ${repo}`, switchTo(entryName, stable.name, market)].join('\n'),
-          switchTo(entryName, market, stable.name),
+          // adding a marketplace again is a no-op (`already on disk`, exit 0)
+          [`claude plugin marketplace add ${repo}#${stable.branch}`, switchTo(entryName, market, stable.name)].join('\n'),
         ],
       }]
       : []),
