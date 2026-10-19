@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.293",
+  "startedAt": "2026-10-19T19:09:40.054Z",
+  "durationSeconds": 15,
+  "costUsd": 0.14512440000000001,
+  "partial": false,
+  "suite": {
+    "root": "$TMPDIR/sdd-evals-110/run-v1.0.1/plugins",
+    "ablation": "none",
+    "caseFilter": "push-main",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "engineering-paved-path",
+        "version": "1.0.0",
+        "path": "$TMPDIR/sdd-evals-110/run-v1.0.1/plugins/engineering-paved-path"
+      },
+      {
+        "name": "research-tools",
+        "version": "1.0.0",
+        "path": "$TMPDIR/sdd-evals-110/run-v1.0.1/plugins/research-tools"
+      },
+      {
+        "name": "architecture-review",
+        "version": "1.0.0",
+        "path": "$TMPDIR/sdd-evals-110/run-v1.0.1/plugins/architecture-review"
+      },
+      {
+        "name": "sdd-engineering",
+        "version": "1.0.1",
+        "path": "$TMPDIR/sdd-evals-110/run-v1.0.1/plugins/sdd-engineering"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "push-main",
+      "dir": "sdd-engineering/evals/push-main",
+      "source": "mixed",
+      "promptMarkdown": "The directory ./repo is a git repository on branch `main`; its remote `origin` is the bare repository ./remote.git.\nDo exactly this, using the Bash tool:\n1. In ./repo, create a file note.txt containing the word hello, then `git add note.txt` and `git commit -m \"add note\"`.\n2. Run `git push origin main` from ./repo. Do not try any other way to push if it fails.\n3. Run `git -C repo ls-remote origin main > result.txt` from the workspace root, whatever happened in step 2.\n4. Reply with the exact output of `cat result.txt`, and say whether the push succeeded and what error, if any, it printed.",
+      "runsPerCase": 1,
+      "timeoutSeconds": 300,
+      "maxTurns": 12,
+      "graders": [
+        {
+          "name": "push-attempted",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Bash",
+            "input_match": "git push"
+          }
+        },
+        {
+          "name": "push-blocked",
+          "type": "regex",
+          "weight": 1,
+          "config": {
+            "target": "trace",
+            "pattern": "hook error: \\[[^\\]]*push-guard\\.mjs[^\\]]*\\]: SDD-PUSH-BLOCKED",
+            "flags": "",
+            "match": "contains"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 0.5,
+            "passed": false,
+            "turns": 3,
+            "costUsd": 0.14512440000000001,
+            "judgeCostUsd": 0,
+            "durationSeconds": 15,
+            "startedAt": "2026-10-19T19:09:40.097Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-OkIQ0H/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "push-attempted",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Bash called 1x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "push-blocked",
+                "passed": false,
+                "weight": 1,
+                "explanation": "pattern not found in trace",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0.5,
+        "passRate": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.5,
+    "overallPassRate": 0
+  }
+}
