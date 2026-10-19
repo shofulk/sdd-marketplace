@@ -4,6 +4,28 @@ All notable changes to `sdd-engineering` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-10-19
+
+### Added
+
+- `hooks/push-guard.mjs`, a PreToolUse `Bash` hook for every caller, the main thread and every
+  subagent: it blocks a `git push` that would update the default branch — a refspec whose
+  destination is it (`main`, `+main`, `HEAD:main`, `refs/heads/main`, `:main`, a `*` pattern
+  that covers it), `--all`, `--branches`, `--mirror`, or no refspec or `HEAD` while on it. The
+  default branch is `refs/remotes/<remote>/HEAD`, else `main`. `--no-verify` changes nothing; a
+  refspec written as `$VAR` or `$(...)` is blocked. The block reads `SDD-PUSH-BLOCKED: <reason>`.
+- Eval case `push-main` (`tags: [v1.1.0]`): the push to `main` is tried and the guard blocks it.
+
+### Dependencies
+
+Verified with:
+
+| Plugin | Range | Version |
+|--------|-------|---------|
+| `engineering-paved-path` | `^1.0.0` | 1.0.0 |
+| `research-tools` | `^1.0.0` | 1.0.0 |
+| `architecture-review` | `^1.0.0` | 1.0.0 |
+
 ## [1.0.1] - 2026-10-18
 
 ### Fixed

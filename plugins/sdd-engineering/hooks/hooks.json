@@ -1,5 +1,5 @@
 {
-  "description": "Per-agent Bash guards, the spec writer's scope and format checks, and the SessionStart trace.",
+  "description": "Per-agent Bash guards, the push guard for every caller, the spec writer's scope and format checks, and the SessionStart trace.",
   "hooks": {
     "PreToolUse": [
       {
@@ -7,7 +7,8 @@
         "hooks": [
           { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" readonly --agents sdd-engineering:spec-creator,sdd-engineering:implementation-planner", "timeout": 15 },
           { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" checks --agents sdd-engineering:plan-verifier", "timeout": 15 },
-          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" implementer --agents sdd-engineering:implementer", "timeout": 15 }
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs\" implementer --agents sdd-engineering:implementer", "timeout": 15 },
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/push-guard.mjs\"", "timeout": 15 }
         ]
       },
       {

@@ -24,3 +24,20 @@ test('every version a smoke grader pins is that plugin\'s plugin.json version', 
     assert.equal(pinned, version(plugin), `${file}: pins ${plugin} ${pinned}, plugin.json says ${version(plugin)}`);
   }
 });
+
+// sdd-engineering/evals/push-main — the 1.1.0 case: the push is tried and the guard's own line
+// is in the trace (the model may repeat the bare marker, so the grader matches the hook line).
+test('the push-main case grades the attempt and the push guard\'s block', () => {
+  const caseDir = join(here, '..', 'evals', 'push-main');
+  const yaml = readFileSync(join(caseDir, 'case.yaml'), 'utf8');
+  assert.match(yaml, /^tags: \[v1\.1\.0\]$/m);
+  assert.match(yaml, /^ {2}scaffold_script: fixture\.sh$/m);
+  assert.match(yaml, /allowed_tools: \[Bash, Read\]/);
+  const graders = readdirSync(join(caseDir, 'graders')).map((f) => readFileSync(join(caseDir, 'graders', f), 'utf8'));
+  assert.ok(graders.some((g) => /type: tool_used/.test(g) && /tool: Bash/.test(g) && /input_match: 'git push'/.test(g)), 'tool_used Bash git push');
+  const block = graders.find((g) => /target: trace/.test(g) && /SDD-PUSH-BLOCKED/.test(g));
+  assert.ok(block, 'a trace grader for the block marker');
+  assert.ok(block.includes(String.raw`hook error: \[[^\]]*push-guard\.mjs[^\]]*\]: SDD-PUSH-BLOCKED`), block);
+  const guard = readFileSync(join(here, '..', 'hooks', 'push-guard.mjs'), 'utf8');
+  assert.match(guard, /export const MARKER = 'SDD-PUSH-BLOCKED';/);
+});

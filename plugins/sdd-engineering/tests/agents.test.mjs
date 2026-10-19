@@ -107,6 +107,12 @@ test('hooks.json: Bash guards per agent', () => {
   for (const c of bash.filter((c) => c.includes('bash-guard.mjs'))) assert.ok(c.startsWith('node "${CLAUDE_PLUGIN_ROOT}/hooks/lib/bash-guard.mjs"'), c);
 });
 
+// 1.1.0: one guard for every caller — no --agents, so the main thread is judged too.
+test('hooks.json: the push guard on Bash, for every caller', () => {
+  const bash = commands('PreToolUse', 'Bash');
+  assert.ok(bash.includes('node "${CLAUDE_PLUGIN_ROOT}/hooks/push-guard.mjs"'), JSON.stringify(bash));
+});
+
 test('hooks.json: spec-guard and spec-lint on Write|Edit', () => {
   const pre = commands('PreToolUse', 'Write|Edit');
   assert.ok(pre.includes('node "${CLAUDE_PLUGIN_ROOT}/hooks/spec-guard.mjs" --agents sdd-engineering:spec-creator'), JSON.stringify(pre));

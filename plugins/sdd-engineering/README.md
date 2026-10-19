@@ -156,9 +156,10 @@ release moves it once its smoke eval is green.
 ## Guards
 
 Plugin agents ignore `hooks` and `permissionMode` in their frontmatter, so each plugin restores
-its agents' guards in its own `hooks/hooks.json`, keyed by `agent_type`. A guard judges only the
-agents it names; the main session is never blocked by an agent guard. Every guard fails open on
-its own errors (one stderr line, exit 0); a block is exit 2 with the reason.
+its agents' guards in its own `hooks/hooks.json`, keyed by `agent_type`. An agent guard judges
+only the agents it names; the main session is never blocked by one. The push guard is the
+exception: it judges every caller. Every guard fails open on its own errors (one stderr line,
+exit 0); a block is exit 2 with the reason.
 
 | Agent | Guard | Allows |
 |---|---|---|
@@ -168,6 +169,7 @@ its own errors (one stderr line, exit 0); a block is exit 2 with the reason.
 | `implementer` | `bash-guard.mjs implementer` | any Bash except commits, pushes and other history changes, `gh pr`, migrations, `psql`, `docker` |
 | `architecture-reviewer` | `bash-guard.mjs checks` (in `architecture-review`) | as plan-verifier |
 | every writer of a spec file | `hooks/spec-lint.mjs` pre / post | format errors are fed back after a write; approving a spec with format errors is blocked |
+| every caller, main thread included | `hooks/push-guard.mjs` (since 1.1.0) | any `git push` that does not update the default branch (`refs/remotes/<remote>/HEAD`, else `main`); `--all`, `--mirror` and a bare push while on it are blocked too, `--no-verify` or not |
 
 The planner, spec-creator and reviewers have no `permissionMode` either: their tool prompts
 follow your session's permission mode.
