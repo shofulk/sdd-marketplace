@@ -1,7 +1,7 @@
 {
   "name": "sdd-engineering",
   "displayName": "SDD Engineering",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Spec-driven engineering: spec-creator, implementation-planner, implementer and plan-verifier agents, run-plan to execute an approved plan, workflow-retro to analyze a finished run.",
   "author": {
     "name": "shofulk"

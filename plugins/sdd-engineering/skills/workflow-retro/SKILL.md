@@ -99,8 +99,11 @@ The **Plugins** section is written from the state's `Plugins:` line, one row per
 
 ## Step 3 — Append the ledger row
 
-Append **one row** to `<retros>/ledger.md`, newest last. When the file does not exist, create it
-with this header first:
+Append **one row** to `<retros>/ledger.md`, newest last. When the file exists, compare its table
+header with the header below (the `| Date | …` row and its separator). If they differ, stop: show
+both headers, name the columns that differ, and ask the user how to migrate the table — never
+append a row under a different header, because its cells would land under the wrong columns.
+When the file does not exist, create it with this header first:
 
 ```markdown
 # Run ledger
